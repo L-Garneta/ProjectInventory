@@ -1,0 +1,66 @@
+[
+    {
+        "id": 1,
+        "namaBarang": "Laptop Dell XPS",
+        "kategori": "Elektronik",
+        "jumlah": 10,
+        "hargaSatuan": 15000000,
+        "lokasi": "Gudang A"
+    },
+    {
+        "id": 2,
+        "namaBarang": "Printer Epson L3110",
+        "kategori": "Elektronik",
+        "jumlah": 3,
+        "hargaSatuan": 3500000,
+        "lokasi": "Gudang A"
+    },
+    {
+        "id": 3,
+        "namaBarang": "Meja Kerja",
+        "kategori": "Furniture",
+        "jumlah": 25,
+        "hargaSatuan": 850000,
+        "lokasi": "Gudang B"
+    },
+    {
+        "id": 4,
+        "namaBarang": "Kursi Kantor",
+        "kategori": "Furniture",
+        "jumlah": 40,
+        "hargaSatuan": 450000,
+        "lokasi": "Gudang B"
+    },
+    {
+        "id": 5,
+        "namaBarang": "Kertas A4",
+        "kategori": "ATK",
+        "jumlah": 2,
+        "hargaSatuan": 45000,
+        "lokasi": "Gudang C"
+    },
+    {
+        "id": 6,
+        "namaBarang": "Bolpoin",
+        "kategori": "ATK",
+        "jumlah": 100,
+        "hargaSatuan": 3000,
+        "lokasi": "Gudang C"
+    },
+    {
+        "id": 7,
+        "namaBarang": "LCD Proyektor",
+        "kategori": "Elektronik",
+        "jumlah": 4,
+        "hargaSatuan": 5500000,
+        "lokasi": "Gudang A"
+    },
+    {
+        "id": 8,
+        "namaBarang": "Rak Buku",
+        "kategori": "Furniture",
+        "jumlah": 15,
+        "hargaSatuan": 1200000,
+        "lokasi": "Gudang B"
+    }
+]
