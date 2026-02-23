@@ -28,7 +28,6 @@ header {
 header h1 {
     font-size: 2.5em;
     margin-bottom: 10px;
-    color: #721c24;
 }
 
 .stats-container {
@@ -142,4 +141,58 @@ tr:hover {
     header h1 {
         font-size: 1.8em;
     }
+}
+/* LOGIN PAGE CENTER */
+body {
+    background: white;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* CONTAINER LOGIN */
+.login-container {
+    width: 350px;
+    padding: 40px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    text-align: center;
+}
+
+/* JUDUL */
+.login-container h2 {
+    margin-bottom: 25px;
+    font-size: 24px;
+    color: #333;
+}
+
+/* INPUT */
+.login-container input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 8px;
+    border: 2px solid #e0e0e0;
+    font-size: 14px;
+}
+
+/* BUTTON */
+.login-container button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 15px;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.login-container button:hover {
+    background: #764ba2;
+    transform: scale(1.05);
 }

@@ -3,15 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>APSI KP - Sistem Inventaris</title>
+    <title>Sistem Inventari</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <header>
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
             <h1>SISTEM INVENTARIS BARANG</h1>
             <p>APSI KP - Manajemen Inventaris</p>
-        </header>
+        </div>
+        <button onclick="logout()" style="padding:8px 15px; cursor:pointer;">
+            Logout
+        </button>
+    </div>
+</header>
 
         <main>
             <div class="stats-container">
@@ -57,6 +64,16 @@
             </div>
         </main>
     </div>
-    <script src="script.js"></script>
+    <body>
+
+<!-- Proteksi Login -->
+<script>
+    if (localStorage.getItem("isLoggedIn") !== "true") {
+        window.location.href = "login.html";
+    }
+</script>
+
+</div>
+
+<script src="script.js"></script>
 </body>
-</html>
