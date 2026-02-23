@@ -28,6 +28,7 @@ header {
 header h1 {
     font-size: 2.5em;
     margin-bottom: 10px;
+    color: #721c24;
 }
 
 .stats-container {
