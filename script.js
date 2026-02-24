@@ -108,3 +108,9 @@ document.getElementById('kategoriFilter').addEventListener('change', filterData)
 
 // Load data saat halaman dimuat
 document.addEventListener('DOMContentLoaded', loadData);
+
+// Fungsi untuk logout
+function logout() {
+    localStorage.removeItem("isLoggedIn");
+    window.location.href = "login.html";
+}
