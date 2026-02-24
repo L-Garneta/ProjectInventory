@@ -1,82 +1,84 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Inventari</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Inventory Baru</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-
 <body>
-    <div class="container">
-        <header>
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <div>
-                    <h1>SISTEM INVENTARIS BARANG</h1>
-                    <p>APSI KP - Manajemen Inventaris</p>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-hospital"></i>
+                    <span>Inventory Baru</span>
                 </div>
-                <button onclick="logout()" style="padding:8px 15px; cursor:pointer;">
-                    Logout
+                <button class="toggle-sidebar" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
                 </button>
             </div>
-        </header>
-
-        <main>
-            <div class="stats-container">
-                <div class="stat-card">
-                    <h3>Total Barang</h3>
-                    <p id="totalBarang">0</p>
-                </div>
-                <div class="stat-card">
-                    <h3>Kategori</h3>
-                    <p id="totalKategori">0</p>
-                </div>
-                <div class="stat-card">
-                    <h3>Total Nilai</h3>
-                    <p id="totalNilai">Rp 0</p>
+            
+            <nav class="sidebar-nav">
+                <a href="#dashboard" class="nav-item active" onclick="loadPage('dashboard')">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#master-barang" class="nav-item" onclick="loadPage('master-barang')">
+                    <i class="fas fa-boxes"></i>
+                    <span>Master Barang</span>
+                </a>
+                <a href="#transaksi-masuk" class="nav-item" onclick="loadPage('transaksi-masuk')">
+                    <i class="fas fa-arrow-down"></i>
+                    <span>Barang Masuk</span>
+                </a>
+                <a href="#transaksi-keluar" class="nav-item" onclick="loadPage('transaksi-keluar')">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>Barang Keluar</span>
+                </a>
+                <a href="#laporan" class="nav-item" onclick="loadPage('laporan')">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Laporan</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <i class="fas fa-user-circle"></i>
+                    <span>Admin</span>
                 </div>
             </div>
+        </aside>
 
-            <div class="search-container">
-                <input type="text" id="searchInput" placeholder="Cari barang...">
-                <select id="kategoriFilter">
-                    <option value="all">Semua Kategori</option>
-                </select>
+        <!-- Main Content -->
+        <main class="main-content" id="main-content">
+            <div class="loading-spinner" id="loading">
+                <i class="fas fa-spinner fa-spin"></i>
+                <span>Memuat...</span>
             </div>
-
-            <div class="table-container">
-                <table id="inventarisTable">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nama Barang</th>
-                            <th>Kategori</th>
-                            <th>Jumlah</th>
-                            <th>Harga Satuan</th>
-                            <th>Total Harga</th>
-                            <th>Lokasi</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tableBody">
-                        <!-- Data akan diisi oleh JavaScript -->
-                    </tbody>
-                </table>
+            
+            <div id="page-content">
+                <!-- Content will be loaded here -->
             </div>
         </main>
     </div>
 
-    <body>
-
-        <!-- Proteksi Login -->
-        <script>
-            if (localStorage.getItem("isLoggedIn") !== "true") {
-                window.location.href = "login.html";
-            }
-        </script>
-
+    <!-- Modal Container -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title"></h3>
+                <button onclick="closeModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
         </div>
+    </div>
 
-        <script src="script.js"></script>
-    </body>
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
