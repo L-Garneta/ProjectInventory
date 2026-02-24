@@ -10,7 +10,7 @@ async function loadData() {
         populateKategoriFilter();
     } catch (error) {
         console.error('Error loading data:', error);
-        document.getElementById('tableBody').innerHTML = 
+        document.getElementById('tableBody').innerHTML =
             '<tr><td colspan="8" style="text-align: center; color: red;">Gagal memuat data. Pastikan file inventaris.json tersedia.</td></tr>';
     }
 }
@@ -18,16 +18,16 @@ async function loadData() {
 // Fungsi untuk menampilkan data
 function displayData(data) {
     const tbody = document.getElementById('tableBody');
-    
+
     if (data.length === 0) {
         tbody.innerHTML = '<tr><td colspan="8" style="text-align: center;">Tidak ada data</td></tr>';
         return;
     }
-    
+
     tbody.innerHTML = data.map(item => {
         const totalHarga = item.jumlah * item.hargaSatuan;
         const statusClass = getStatusClass(item.jumlah);
-        
+
         return `
             <tr>
                 <td>${item.id}</td>
@@ -67,7 +67,7 @@ function updateStats() {
     const totalBarang = inventarisData.length;
     const totalKategori = new Set(inventarisData.map(item => item.kategori)).size;
     const totalNilai = inventarisData.reduce((sum, item) => sum + (item.jumlah * item.hargaSatuan), 0);
-    
+
     document.getElementById('totalBarang').textContent = totalBarang;
     document.getElementById('totalKategori').textContent = totalKategori;
     document.getElementById('totalNilai').textContent = `Rp ${formatRupiah(totalNilai)}`;
@@ -77,7 +77,7 @@ function updateStats() {
 function populateKategoriFilter() {
     const kategoriSet = new Set(inventarisData.map(item => item.kategori));
     const filterSelect = document.getElementById('kategoriFilter');
-    
+
     kategoriSet.forEach(kategori => {
         const option = document.createElement('option');
         option.value = kategori;
@@ -90,15 +90,15 @@ function populateKategoriFilter() {
 function filterData() {
     const searchTerm = document.getElementById('searchInput').value.toLowerCase();
     const kategori = document.getElementById('kategoriFilter').value;
-    
+
     const filteredData = inventarisData.filter(item => {
-        const matchesSearch = item.namaBarang.toLowerCase().includes(searchTerm) || 
-                             item.id.toString().includes(searchTerm);
+        const matchesSearch = item.namaBarang.toLowerCase().includes(searchTerm) ||
+            item.id.toString().includes(searchTerm);
         const matchesKategori = kategori === 'all' || item.kategori === kategori;
-        
+
         return matchesSearch && matchesKategori;
     });
-    
+
     displayData(filteredData);
 }
 
