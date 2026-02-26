@@ -1,0 +1,23 @@
+{
+  "name": "projectinventory",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "serve client -l 3000"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/L-Garneta/ProjectInventory.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/L-Garneta/ProjectInventory/issues"
+  },
+  "homepage": "https://github.com/L-Garneta/ProjectInventory#readme",
+  "devDependencies": {
+    "serve": "^14.2.5"
+  }
+}
