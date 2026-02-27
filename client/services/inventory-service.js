@@ -1,4 +1,3 @@
-// client/services/inventory-service.js
 import { getItems } from "./data-store.js";
 
 export async function getDashboardData() {
@@ -8,17 +7,12 @@ export async function getDashboardData() {
     const barangKritisList = items.filter((i) => i.stok <= i.stokMin);
     const barangKritis = barangKritisList.length;
 
-    // sementara masih dummy (nanti pakai data transaksi beneran)
-    const totalMasukBulan = 12;
-    const totalKeluarBulan = 7;
-    const bulan = new Date().toLocaleString("id-ID", { month: "long", year: "numeric" });
-
     return {
         totalBarang,
         barangKritis,
-        totalMasukBulan,
-        totalKeluarBulan,
-        bulan,
+        totalMasukBulan: 0,
+        totalKeluarBulan: 0,
+        bulan: new Date().toLocaleString("id-ID", { month: "long", year: "numeric" }),
         barangKritisList,
     };
 }
