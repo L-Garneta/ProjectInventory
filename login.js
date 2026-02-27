@@ -15,6 +15,7 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
     // pindah ke halaman inventory
     window.location.href = "index.html";
   } else {
-    document.getElementById("error").textContent ="Username atau password salah!";
+    document.getElementById("error").textContent =
+      "Username atau password salah!";
   }
 });
