@@ -1,6 +1,7 @@
 export function Navbar() {
-    return `
+  return `
     <nav class="navbar">
+    <div class="navbar-container">
       <div class="nav-brand">Inventory</div>
       <ul class="nav-menu">
         <li><a href="#" data-page="dashboard" class="nav-link active">Dashboard</a></li>
@@ -15,26 +16,26 @@ export function Navbar() {
 }
 
 export function initNavbar(onNavigate) {
-    const links = document.querySelectorAll(".nav-link");
-    links.forEach((link) => {
-        link.addEventListener("click", (e) => {
-            e.preventDefault();
-            const page = link.dataset.page;
+  const links = document.querySelectorAll(".nav-link");
+  links.forEach((link) => {
+    link.addEventListener("click", (e) => {
+      e.preventDefault();
+      const page = link.dataset.page;
 
-            // active state
-            links.forEach((l) => l.classList.remove("active"));
-            link.classList.add("active");
+      // active state
+      links.forEach((l) => l.classList.remove("active"));
+      link.classList.add("active");
 
-            onNavigate(page);
-        });
+      onNavigate(page);
     });
+  });
 
-    const logoutBtn = document.getElementById("logoutBtn");
-    if (logoutBtn) {
-        logoutBtn.addEventListener("click", (e) => {
-            e.preventDefault();
-            localStorage.removeItem("isLoggedIn");
-            onNavigate("login");
-        });
-    }
+  const logoutBtn = document.getElementById("logoutBtn");
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      localStorage.removeItem("isLoggedIn");
+      onNavigate("login");
+    });
+  }
 }
