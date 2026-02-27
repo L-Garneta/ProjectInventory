@@ -1,4 +1,4 @@
-/* Navbar basic */
+/* NAVBAR */
 .navbar {
     display: flex;
     align-items: center;
@@ -42,7 +42,7 @@ main#app {
     padding: 16px;
 }
 
-/*dashboard*/
+/* DASHBOARD */
 .dashboard {
     padding: 16px;
     background: #F9F8F6;
@@ -113,7 +113,7 @@ main#app {
     color: #ef4444;
 }
 
-/*login*/
+/* LOGIN */
 .login-page {
     min-height: calc(100vh - 60px);
     display: grid;
@@ -156,4 +156,80 @@ main#app {
 .error-text {
     color: #ef4444;
     min-height: 18px;
+}
+
+/*MASTER_BARANG*/
+.page {
+    padding: 16px;
+}
+
+.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.btn-tmbhBrg {
+    background: #C9B59C;
+    color: #000000;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+.btn-sm {
+    padding: 6px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 1px solid #64748b;
+    color: #000000;
+    margin-right: 6px;
+}
+
+.btn-danger {
+    background: #ef4444;
+    border: none;
+    color: #fff;
+}
+
+/*form*/
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, .5);
+    display: grid;
+    place-items: center;
+    z-index: 50;
+}
+
+.modal.hidden {
+    display: none;
+}
+
+.modal-content {
+    background: #C9B59C;
+    color: #000000;
+    padding: 16px;
+    border-radius: 12px;
+    width: 360px;
+    max-width: calc(100vw - 32px);
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 10px;
+}
+
+.form-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
 }

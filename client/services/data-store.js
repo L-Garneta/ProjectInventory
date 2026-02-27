@@ -48,3 +48,23 @@ export function deleteItem(kode) {
     data.items = data.items.filter((i) => i.kode !== kode);
     setStore(data);
 }
+
+export function addTransaksiMasuk({ kode, jumlah, keterangan = "" }) {
+    const data = JSON.parse(localStorage.getItem("inventory:data"));
+
+    const item = data.items.find((i) => i.kode === kode);
+    if (!item) throw new Error("Barang tidak ditemukan");
+
+    const qty = Number(jumlah) || 0;
+    item.stok = Number(item.stok || 0) + qty;
+
+    data.transaksiMasuk.push({
+        id: Date.now(),
+        kode,
+        jumlah: qty,
+        tanggal: new Date().toISOString(),
+        keterangan,
+    });
+
+    localStorage.setItem("inventory:data", JSON.stringify(data));
+}
