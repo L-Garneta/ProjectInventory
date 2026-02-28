@@ -239,3 +239,77 @@ main#app {
     gap: 8px;
     justify-content: flex-end;
 }
+/* ===================================== */
+/* TRANSAKSI KELUAR STYLE */
+/* ===================================== */
+
+.page-title {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.action-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.btn-primary-main {
+    background: #877969;
+    color: #ffffff;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.btn-primary-main:hover {
+    opacity: 0.9;
+}
+
+.filter-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.filter-bar input {
+    padding: 6px 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+.btn-primary-sm {
+    background: #877969;
+    color: #ffffff;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn-primary-sm:hover {
+    opacity: 0.9;
+}
+
+.transaksi-table thead {
+    background: #D9CFC7;
+}
+
+.transaksi-table th {
+    text-align: left;
+    padding: 10px;
+}
+
+.transaksi-table td {
+    padding: 10px;
+}
+
+.empty-text {
+    color: #777;
+    padding: 20px 0;
+}
