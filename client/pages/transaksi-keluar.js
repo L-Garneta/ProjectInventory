@@ -1,23 +1,30 @@
+import {
+  getItems,
+  getTransaksiKeluar,
+  addTransaksiKeluar,
+  deleteTransaksiKeluar,
+  clearTransaksiKeluar,
+} from "../services/data-store.js";
+
 export function TransaksiKeluar() {
   return `
     <div class="page">
-      
       <h1 class="page-title">Stok Keluar</h1>
 
       <div class="action-bar">
-        <button class="btn-primary-main">+ Tambah Stok Keluar</button>
-        <button class="btn-outline">Hapus Semua</button>
+        <button id="btn-add" class="btn-primary-main">+ Tambah Stok Keluar</button>
+        <button id="btn-clear" class="btn-outline">Hapus Semua</button>
       </div>
 
       <div class="filter-bar">
         <label>Dari:</label>
-        <input type="date" />
+        <input type="date" id="filter-dari" />
 
         <label>Sampai:</label>
-        <input type="date" />
+        <input type="date" id="filter-sampai" />
 
-        <button class="btn-primary-sm">Filter</button>
-        <button class="btn-outline">Reset</button>
+        <button id="btn-filter" class="btn-primary-sm">Filter</button>
+        <button id="btn-reset" class="btn-outline">Reset</button>
       </div>
 
       <div class="card">
@@ -39,7 +46,7 @@ export function TransaksiKeluar() {
                 <th>Aksi</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody id="trx-body">
               <tr>
                 <td colspan="8" class="text-center empty-text">
                   Belum ada data
@@ -50,10 +57,169 @@ export function TransaksiKeluar() {
         </div>
       </div>
 
+      <!-- MODAL TAMBAH -->
+      <div id="modal-keluar" class="modal hidden">
+        <div class="modal-content">
+          <h3>Tambah Stok Keluar</h3>
+
+          <form id="form-keluar" class="form-grid">
+            <div class="form-group">
+              <label>Barang</label>
+              <select id="kode" required>
+                <option value="">Pilih barang</option>
+                ${getItems()
+      .map(
+        (i) =>
+          `<option value="${i.kode}">
+                        ${i.kode} - ${i.nama} (Stok: ${i.stok})
+                      </option>`
+      )
+      .join("")}
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Jumlah</label>
+              <input id="jumlah" type="number" min="1" required />
+            </div>
+
+            <div class="form-group">
+              <label>Penerima</label>
+              <input id="penerima" />
+            </div>
+
+            <div class="form-group">
+              <label>Keterangan</label>
+              <input id="keterangan" />
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn-primary-main">
+                Simpan
+              </button>
+              <button type="button" id="btn-close" class="btn-outline">
+                Batal
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   `;
 }
 
 export function initTransaksiKeluar() {
-  console.log("Halaman Transaksi Keluar aktif");
+  renderTable();
+
+  // buka modal
+  document.getElementById("btn-add").addEventListener("click", () => {
+    toggleModal(true);
+  });
+
+  document.getElementById("btn-close").addEventListener("click", () => {
+    toggleModal(false);
+  });
+
+  // submit transaksi
+  document
+    .getElementById("form-keluar")
+    .addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      try {
+        addTransaksiKeluar({
+          kode: document.getElementById("kode").value,
+          jumlah: document.getElementById("jumlah").value,
+          penerima: document.getElementById("penerima").value,
+          keterangan: document.getElementById("keterangan").value,
+        });
+
+        alert("Transaksi berhasil");
+        toggleModal(false);
+        e.target.reset();
+        renderTable();
+      } catch (err) {
+        alert(err.message);
+      }
+    });
+
+  // hapus semua
+  document.getElementById("btn-clear").addEventListener("click", () => {
+    if (confirm("Yakin hapus semua transaksi?")) {
+      clearTransaksiKeluar();
+      renderTable();
+    }
+  });
+
+  // filter
+  document.getElementById("btn-filter").addEventListener("click", () => {
+    renderTable(true);
+  });
+
+  document.getElementById("btn-reset").addEventListener("click", () => {
+    document.getElementById("filter-dari").value = "";
+    document.getElementById("filter-sampai").value = "";
+    renderTable();
+  });
+}
+
+function renderTable(useFilter = false) {
+  const tbody = document.getElementById("trx-body");
+  let data = getTransaksiKeluar();
+
+  if (useFilter) {
+    const dari = document.getElementById("filter-dari").value;
+    const sampai = document.getElementById("filter-sampai").value;
+
+    if (dari)
+      data = data.filter((t) => new Date(t.tanggal) >= new Date(dari));
+
+    if (sampai)
+      data = data.filter((t) => new Date(t.tanggal) <= new Date(sampai));
+  }
+
+  if (!data.length) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="8" class="text-center empty-text">
+          Belum ada data
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+  tbody.innerHTML = data
+    .map(
+      (trx, i) => `
+      <tr>
+        <td>${i + 1}</td>
+        <td>${trx.tanggal}</td>
+        <td>${trx.kode}</td>
+        <td>${trx.nama}</td>
+        <td>${trx.jumlah}</td>
+        <td>${trx.penerima || "-"}</td>
+        <td>${trx.keterangan || "-"}</td>
+        <td>
+          <button class="btn-danger-sm" data-id="${trx.id}">
+            Hapus
+          </button>
+        </td>
+      </tr>
+    `
+    )
+    .join("");
+
+  tbody.querySelectorAll("[data-id]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      deleteTransaksiKeluar(Number(btn.dataset.id));
+      renderTable();
+    });
+  });
+}
+
+function toggleModal(show) {
+  document
+    .getElementById("modal-keluar")
+    .classList.toggle("hidden", !show);
 }

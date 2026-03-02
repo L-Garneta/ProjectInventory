@@ -100,3 +100,75 @@ export function deleteTransaksiMasuk(id) {
 
     setStore(data);
 }
+
+// ==================== TRANSAKSI KELUAR ====================
+
+export function getTransaksiKeluar() {
+    return getStore().transaksiKeluar || [];
+}
+
+export function addTransaksiKeluar({
+    kode,
+    jumlah,
+    penerima = "",
+    keterangan = "",
+}) {
+    const data = getStore();
+
+    const item = data.items.find((i) => i.kode === kode);
+    if (!item) throw new Error("Barang tidak ditemukan");
+
+    const qty = Number(jumlah) || 0;
+    if (qty <= 0) throw new Error("Jumlah tidak valid");
+
+    if (item.stok < qty) {
+        throw new Error("Stok tidak mencukupi");
+    }
+
+    // Kurangi stok
+    item.stok -= qty;
+
+    data.transaksiKeluar.push({
+        id: Date.now(),
+        tanggal: new Date().toLocaleDateString("id-ID"),
+        kode,
+        nama: item.nama,
+        jumlah: qty,
+        penerima,
+        ruangan: item.ruangan || "-",
+        keterangan,
+    });
+
+    setStore(data);
+}
+
+export function deleteTransaksiKeluar(id) {
+    const data = getStore();
+
+    const trx = data.transaksiKeluar.find((t) => t.id === id);
+    if (!trx) return;
+
+    // Kembalikan stok
+    const item = data.items.find((i) => i.kode === trx.kode);
+    if (item) {
+        item.stok += trx.jumlah;
+    }
+
+    data.transaksiKeluar = data.transaksiKeluar.filter((t) => t.id !== id);
+    setStore(data);
+}
+
+export function clearTransaksiKeluar() {
+    const data = getStore();
+
+    // Kembalikan semua stok dulu
+    data.transaksiKeluar.forEach((trx) => {
+        const item = data.items.find((i) => i.kode === trx.kode);
+        if (item) {
+            item.stok += trx.jumlah;
+        }
+    });
+
+    data.transaksiKeluar = [];
+    setStore(data);
+}
