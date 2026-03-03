@@ -1,5 +1,9 @@
 // client/pages/laporan.js
-import { getItems } from "../services/data-store.js";
+import {
+  getItems,
+  getTransaksiMasuk,
+  getTransaksiKeluar,
+} from "../services/data-store.js";
 
 export function Laporan() {
   return `
@@ -15,6 +19,9 @@ export function Laporan() {
           <option value="opname">Stok Opname</option>
         </select>
 
+        <input type="date" id="filterDari">
+        <input type="date" id="filterSampai">
+
         <button id="btn-generate" class="btn-primary">
           Generate Laporan
         </button>
@@ -28,9 +35,9 @@ export function Laporan() {
         </button>
       </div>
 
-      <div class="card">
+      <div class="card" id="laporan-area">
         <div class="card-body">
-          <table class="table">
+          <table class="table" id="laporan-table">
             <thead id="laporan-thead"></thead>
             <tbody id="laporan-tbody"></tbody>
           </table>
@@ -57,17 +64,19 @@ export function initLaporan() {
     if (jenis === "master") {
       renderMasterBarang();
     } else if (jenis === "masuk") {
-      renderPlaceholder("Transaksi Masuk");
+      renderTransaksiMasuk();
     } else if (jenis === "keluar") {
-      renderPlaceholder("Transaksi Keluar");
+      renderTransaksiKeluar();
     } else if (jenis === "opname") {
-      renderPlaceholder("Stok Opname");
+      renderStokOpname();
     }
   }
 
+  // =============================
+  // MASTER BARANG
+  // =============================
   function renderMasterBarang() {
     const items = getItems();
-
     const thead = document.getElementById("laporan-thead");
     const tbody = document.getElementById("laporan-tbody");
 
@@ -77,19 +86,89 @@ export function initLaporan() {
         <th>Nama</th>
         <th>Kategori</th>
         <th>Ruangan</th>
-        <th>Harga</th>
         <th>Stok</th>
       </tr>
     `;
 
-    if (!items.length) {
-      tbody.innerHTML = `
+    tbody.innerHTML = items.length
+      ? items
+          .map(
+            (item) => `
         <tr>
-          <td colspan="6" class="text-center">Tidak ada data</td>
+          <td>${item.kode}</td>
+          <td>${item.nama}</td>
+          <td>${item.kategori || "-"}</td>
+          <td>${item.ruangan || "-"}</td>
+          <td>${item.stok}</td>
         </tr>
-      `;
-      return;
-    }
+      `,
+          )
+          .join("")
+      : `<tr><td colspan="5" class="text-center">Tidak ada data</td></tr>`;
+  }
+
+  // =============================
+  // TRANSAKSI MASUK
+  // =============================
+  function renderTransaksiMasuk() {
+    const data = filterByTanggal(getTransaksiMasuk());
+    renderTransaksiTable(data, "Transaksi Masuk");
+  }
+
+  // =============================
+  // TRANSAKSI KELUAR
+  // =============================
+  function renderTransaksiKeluar() {
+    const data = filterByTanggal(getTransaksiKeluar());
+    renderTransaksiTable(data, "Transaksi Keluar");
+  }
+
+  function renderTransaksiTable(data, title) {
+    const thead = document.getElementById("laporan-thead");
+    const tbody = document.getElementById("laporan-tbody");
+
+    thead.innerHTML = `
+      <tr>
+        <th>Tanggal</th>
+        <th>Kode</th>
+        <th>Nama</th>
+        <th>Jumlah</th>
+      </tr>
+    `;
+
+    tbody.innerHTML = data.length
+      ? data
+          .map(
+            (trx) => `
+        <tr>
+          <td>${trx.tanggal}</td>
+          <td>${trx.kode}</td>
+          <td>${trx.nama}</td>
+          <td>${trx.jumlah}</td>
+        </tr>
+      `,
+          )
+          .join("")
+      : `<tr><td colspan="4" class="text-center">Tidak ada data ${title}</td></tr>`;
+  }
+
+  // =============================
+  // STOK OPNAME
+  // =============================
+  function renderStokOpname() {
+    const items = getItems();
+    const thead = document.getElementById("laporan-thead");
+    const tbody = document.getElementById("laporan-tbody");
+
+    thead.innerHTML = `
+      <tr>
+        <th>Kode</th>
+        <th>Nama</th>
+        <th>Stok</th>
+        <th>Min Stok</th>
+        <th>Status</th>
+      </tr>
+    `;
 
     tbody.innerHTML = items
       .map(
@@ -97,39 +176,68 @@ export function initLaporan() {
       <tr>
         <td>${item.kode}</td>
         <td>${item.nama}</td>
-        <td>${item.kategori || "-"}</td>
-        <td>${item.ruangan || "-"}</td>
-        <td>Rp ${Number(item.harga || 0).toLocaleString("id-ID")}</td>
         <td>${item.stok}</td>
+        <td>${item.stokMin}</td>
+        <td>${item.stok <= item.stokMin ? "Perlu Restock" : "Aman"}</td>
       </tr>
     `,
       )
       .join("");
   }
 
-  function renderPlaceholder(title) {
-    const thead = document.getElementById("laporan-thead");
-    const tbody = document.getElementById("laporan-tbody");
+  // =============================
+  // FILTER TANGGAL
+  // =============================
+  function filterByTanggal(data) {
+    const dari = document.getElementById("filterDari").value;
+    const sampai = document.getElementById("filterSampai").value;
 
-    thead.innerHTML = `<tr><th>${title}</th></tr>`;
-    tbody.innerHTML = `
-      <tr>
-        <td class="text-center">
-          Data ${title} belum tersedia
-        </td>
-      </tr>
-    `;
+    if (!dari && !sampai) return data;
+
+    return data.filter((trx) => {
+      const tgl = new Date(trx.tanggal.split("/").reverse().join("-"));
+      const from = dari ? new Date(dari) : null;
+      const to = sampai ? new Date(sampai) : null;
+
+      if (from && tgl < from) return false;
+      if (to && tgl > to) return false;
+      return true;
+    });
   }
 
+  // =============================
+  // EXPORT PDF (HANYA TABEL)
+  // =============================
   function exportPDF() {
-    window.print();
+    const tableHTML = document.getElementById("laporan-area").innerHTML;
+    const newWin = window.open("", "", "width=900,height=700");
+    newWin.document.write(`
+      <html>
+        <head>
+          <title>Laporan</title>
+          <style>
+            body { font-family: Arial; padding:20px; }
+            table { width:100%; border-collapse: collapse; }
+            th, td { border:1px solid #000; padding:8px; text-align:left; }
+            th { background:#f2f2f2; }
+          </style>
+        </head>
+        <body>
+          <h3>Laporan</h3>
+          ${tableHTML}
+        </body>
+      </html>
+    `);
+    newWin.document.close();
+    newWin.print();
   }
 
+  // =============================
+  // EXPORT EXCEL
+  // =============================
   function exportExcel() {
-    const table = document.querySelector(".table");
-    let tableHTML = table.outerHTML;
-
-    const blob = new Blob([tableHTML], {
+    const table = document.getElementById("laporan-table");
+    const blob = new Blob([table.outerHTML], {
       type: "application/vnd.ms-excel",
     });
 
