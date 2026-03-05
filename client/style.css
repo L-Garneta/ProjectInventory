@@ -239,9 +239,8 @@ main#app {
     gap: 8px;
     justify-content: flex-end;
 }
-/* ===================================== */
+
 /* TRANSAKSI KELUAR STYLE */
-/* ===================================== */
 
 .page-title {
     font-size: 28px;
@@ -312,4 +311,99 @@ main#app {
 .empty-text {
     color: #777;
     padding: 20px 0;
+}
+/* 
+LAPORAN PAGE */
+
+.page-title {
+  margin-bottom: 20px;
+}
+
+/* Container Filter */
+.filter-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+/* Select dan input tanggal */
+.filter-container select,
+.filter-container input {
+  padding: 8px 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+/* Card laporan */
+#laporan-area {
+  margin-top: 10px;
+}
+
+/* Table laporan */
+#laporan-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#laporan-table th {
+  background: #D9CFC7;
+  font-weight: 600;
+}
+
+#laporan-table th,
+#laporan-table td {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+/* Hover table */
+#laporan-table tbody tr:hover {
+  background: #f9fafb;
+}
+
+/* Tombol */
+.btn-primary {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background: #1d4ed8;
+}
+
+.btn-outline {
+  background: white;
+  border: 1px solid #2563eb;
+  color: #2563eb;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-outline:hover {
+  background: #2563eb;
+  color: white;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+
+  .filter-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-container button,
+  .filter-container select,
+  .filter-container input {
+    width: 100%;
+  }
+
 }
