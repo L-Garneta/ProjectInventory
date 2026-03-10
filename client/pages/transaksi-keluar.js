@@ -68,13 +68,13 @@ export function TransaksiKeluar() {
               <select id="kode" required>
                 <option value="">Pilih barang</option>
                 ${getItems()
-      .map(
-        (i) =>
-          `<option value="${i.kode}">
+                  .map(
+                    (i) =>
+                      `<option value="${i.kode}">
                         ${i.kode} - ${i.nama} (Stok: ${i.stok})
-                      </option>`
-      )
-      .join("")}
+                      </option>`,
+                  )
+                  .join("")}
               </select>
             </div>
 
@@ -121,27 +121,25 @@ export function initTransaksiKeluar() {
   });
 
   // submit transaksi
-  document
-    .getElementById("form-keluar")
-    .addEventListener("submit", (e) => {
-      e.preventDefault();
+  document.getElementById("form-keluar").addEventListener("submit", (e) => {
+    e.preventDefault();
 
-      try {
-        addTransaksiKeluar({
-          kode: document.getElementById("kode").value,
-          jumlah: document.getElementById("jumlah").value,
-          penerima: document.getElementById("penerima").value,
-          keterangan: document.getElementById("keterangan").value,
-        });
+    try {
+      addTransaksiKeluar({
+        kode: document.getElementById("kode").value,
+        jumlah: document.getElementById("jumlah").value,
+        penerima: document.getElementById("penerima").value,
+        keterangan: document.getElementById("keterangan").value,
+      });
 
-        alert("Transaksi berhasil");
-        toggleModal(false);
-        e.target.reset();
-        renderTable();
-      } catch (err) {
-        alert(err.message);
-      }
-    });
+      alert("Transaksi berhasil");
+      toggleModal(false);
+      e.target.reset();
+      renderTable();
+    } catch (err) {
+      alert(err.message);
+    }
+  });
 
   // hapus semua
   document.getElementById("btn-clear").addEventListener("click", () => {
@@ -171,8 +169,7 @@ function renderTable(useFilter = false) {
     const dari = document.getElementById("filter-dari").value;
     const sampai = document.getElementById("filter-sampai").value;
 
-    if (dari)
-      data = data.filter((t) => new Date(t.tanggal) >= new Date(dari));
+    if (dari) data = data.filter((t) => new Date(t.tanggal) >= new Date(dari));
 
     if (sampai)
       data = data.filter((t) => new Date(t.tanggal) <= new Date(sampai));
@@ -206,7 +203,7 @@ function renderTable(useFilter = false) {
           </button>
         </td>
       </tr>
-    `
+    `,
     )
     .join("");
 
@@ -219,7 +216,5 @@ function renderTable(useFilter = false) {
 }
 
 function toggleModal(show) {
-  document
-    .getElementById("modal-keluar")
-    .classList.toggle("hidden", !show);
+  document.getElementById("modal-keluar").classList.toggle("hidden", !show);
 }
