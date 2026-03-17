@@ -1,17 +1,14 @@
-/* NAVBAR */
-.navbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: #C9B59C;
-    color: #000000;
-    padding: 12px 16px;
+/* SIDEBAR */
+.sidebar {
+  width: 230px;
+  height: 100vh;
+  background-color: #b8a890;
+  padding: 20px;
+  position: fixed;
 }
-.navbar-container {
-  max-width: 1200px;
-  margin: auto;
-  display: flex;
-  flex-wrap: wrap;
+
+.sidebar-container {
+  display: block;
 }
 
 .nav-brand {
@@ -19,19 +16,21 @@
     letter-spacing: .5px;
 }
 
-.nav-menu {
-    list-style: none;
-    display: flex;
-    gap: 12px;
-    margin: 0;
-    padding: 0;
+.sidebar-menu {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar-menu li {
+  margin-bottom: 10px;
 }
 
 .nav-link {
-    color: #000000;
-    text-decoration: none;
-    padding: 6px 10px;
-    border-radius: 6px;
+  display: block;
+  padding: 10px;
+  border-radius: 8px;
+  text-decoration: none;
+  color: black;
 }
 
 .nav-link:hover {
@@ -46,6 +45,10 @@
 
 main#app {
     padding: 16px;
+}
+#app {
+  margin-left: 250px;
+  padding: 20px;
 }
 
 /* DASHBOARD */
