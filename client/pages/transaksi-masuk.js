@@ -4,7 +4,7 @@ import {
   getTransaksiMasuk,
   addTransaksiMasuk,
   deleteTransaksiMasuk,
-} from "../services/data-store.js";
+} from "../services/api.js";
 
 let editId = null;
 

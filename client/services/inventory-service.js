@@ -1,4 +1,4 @@
-import { getItems } from "./data-store.js";
+/*import { getItems } from "./data-store.js";
 
 export async function getDashboardData() {
     const items = getItems();
@@ -16,3 +16,4 @@ export async function getDashboardData() {
         barangKritisList,
     };
 }
+    */

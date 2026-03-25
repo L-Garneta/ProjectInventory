@@ -1,5 +1,5 @@
 // client/pages/master-barang.js
-import { getItems, addItem, updateItem, deleteItem } from "../services/data-store.js";
+import { getItems, addItem, updateItem, deleteItem } from "../services/api.js";
 
 let editKode = null; // null = mode tambah, selain itu = mode edit
 
