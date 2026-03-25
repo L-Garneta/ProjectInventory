@@ -1,4 +1,4 @@
-const KEY = "inventory:data";
+/*const KEY = "inventory:data";
 
 const seedData = {
     items: [
@@ -171,4 +171,4 @@ export function clearTransaksiKeluar() {
 
     data.transaksiKeluar = [];
     setStore(data);
-}
+}*/

@@ -4,7 +4,7 @@ import {
   addTransaksiKeluar,
   deleteTransaksiKeluar,
   clearTransaksiKeluar,
-} from "../services/data-store.js";
+} from "../services/api.js";
 
 export function TransaksiKeluar() {
   return `
@@ -68,13 +68,13 @@ export function TransaksiKeluar() {
               <select id="kode" required>
                 <option value="">Pilih barang</option>
                 ${getItems()
-                  .map(
-                    (i) =>
-                      `<option value="${i.kode}">
+      .map(
+        (i) =>
+          `<option value="${i.kode}">
                         ${i.kode} - ${i.nama} (Stok: ${i.stok})
                       </option>`,
-                  )
-                  .join("")}
+      )
+      .join("")}
               </select>
             </div>
 

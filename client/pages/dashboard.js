@@ -1,8 +1,8 @@
-import { getDashboardData } from "../services/inventory-service.js";
+import { getDashboardData } from "../services/api.js";
 import { getStokClass } from "../utils/helper.js";
 
 export function Dashboard() {
-    return `
+  return `
     <div class="dashboard">
       <div class="stats-grid">
         <div class="stat-card">
@@ -54,30 +54,30 @@ export function Dashboard() {
 }
 
 export async function initDashboard() {
-    try {
-        const data = await getDashboardData();
+  try {
+    const data = await getDashboardData();
 
-        document.getElementById("total-barang").textContent =
-            data.totalBarang ?? 0;
+    document.getElementById("total-barang").textContent =
+      data.totalBarang ?? 0;
 
-        document.getElementById("barang-kritis").textContent =
-            data.barangKritis ?? 0;
+    document.getElementById("barang-kritis").textContent =
+      data.barangKritis ?? 0;
 
-        document.getElementById("total-masuk").textContent =
-            data.totalMasukBulan ?? 0;
+    document.getElementById("total-masuk").textContent =
+      data.totalMasukBulan ?? 0;
 
-        document.getElementById("total-keluar").textContent =
-            data.totalKeluarBulan ?? 0;
+    document.getElementById("total-keluar").textContent =
+      data.totalKeluarBulan ?? 0;
 
-        document.getElementById("bulan-info").textContent =
-            data.bulan ?? "";
+    document.getElementById("bulan-info").textContent =
+      data.bulan ?? "";
 
-        const tbody = document.getElementById("kritis-list");
+    const tbody = document.getElementById("kritis-list");
 
-        if (data.barangKritisList?.length) {
-            tbody.innerHTML = data.barangKritisList
-                .map(
-                    (item) => `
+    if (data.barangKritisList?.length) {
+      tbody.innerHTML = data.barangKritisList
+        .map(
+          (item) => `
           <tr>
             <td>${item.kode}</td>
             <td>${item.nama}</td>
@@ -85,21 +85,21 @@ export async function initDashboard() {
             <td>${item.stokMin}</td>
           </tr>
         `
-                )
-                .join("");
-        } else {
-            tbody.innerHTML = `
+        )
+        .join("");
+    } else {
+      tbody.innerHTML = `
         <tr>
           <td colspan="4" class="text-center">Tidak ada barang kritis</td>
         </tr>
       `;
-        }
-    } catch (e) {
-        console.error(e);
-        document.getElementById("kritis-list").innerHTML = `
+    }
+  } catch (e) {
+    console.error(e);
+    document.getElementById("kritis-list").innerHTML = `
       <tr>
         <td colspan="4" class="text-center">Gagal memuat data</td>
       </tr>
     `;
-    }
+  }
 }
