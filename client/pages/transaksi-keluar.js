@@ -67,14 +67,7 @@ export function TransaksiKeluar() {
               <label>Barang</label>
               <select id="kode" required>
                 <option value="">Pilih barang</option>
-                ${getItems()
-      .map(
-        (i) =>
-          `<option value="${i.kode}">
-                        ${i.kode} - ${i.nama} (Stok: ${i.stok})
-                      </option>`,
-      )
-      .join("")}
+  
               </select>
             </div>
 
@@ -110,6 +103,7 @@ export function TransaksiKeluar() {
 
 export function initTransaksiKeluar() {
   renderTable();
+  loadItems();
 
   // buka modal
   document.getElementById("btn-add").addEventListener("click", () => {
@@ -121,11 +115,11 @@ export function initTransaksiKeluar() {
   });
 
   // submit transaksi
-  document.getElementById("form-keluar").addEventListener("submit", (e) => {
+  document.getElementById("form-keluar").addEventListener("submit", async (e) => {
     e.preventDefault();
 
     try {
-      addTransaksiKeluar({
+      await addTransaksiKeluar({
         kode: document.getElementById("kode").value,
         jumlah: document.getElementById("jumlah").value,
         penerima: document.getElementById("penerima").value,
@@ -142,9 +136,9 @@ export function initTransaksiKeluar() {
   });
 
   // hapus semua
-  document.getElementById("btn-clear").addEventListener("click", () => {
+  document.getElementById("btn-clear").addEventListener("click", async () => {
     if (confirm("Yakin hapus semua transaksi?")) {
-      clearTransaksiKeluar();
+      await clearTransaksiKeluar();
       renderTable();
     }
   });
@@ -161,9 +155,9 @@ export function initTransaksiKeluar() {
   });
 }
 
-function renderTable(useFilter = false) {
+async function renderTable(useFilter = false) {
   const tbody = document.getElementById("trx-body");
-  let data = getTransaksiKeluar();
+  let data = await getTransaksiKeluar();
 
   if (useFilter) {
     const dari = document.getElementById("filter-dari").value;
@@ -208,8 +202,8 @@ function renderTable(useFilter = false) {
     .join("");
 
   tbody.querySelectorAll("[data-id]").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      deleteTransaksiKeluar(Number(btn.dataset.id));
+    btn.addEventListener("click", async () => {
+      await deleteTransaksiKeluar(Number(btn.dataset.id));
       renderTable();
     });
   });
@@ -217,4 +211,18 @@ function renderTable(useFilter = false) {
 
 function toggleModal(show) {
   document.getElementById("modal-keluar").classList.toggle("hidden", !show);
+}
+
+async function loadItems() {
+  const items = await getItems();
+  const select = document.getElementById("kode");
+
+  select.innerHTML = `
+    <option value="">Pilih barang</option>
+    ${items.map(i => `
+      <option value="${i.kode}">
+        ${i.kode} - ${i.nama} (Stok: ${i.stok})
+      </option>
+    `).join("")}
+  `;
 }

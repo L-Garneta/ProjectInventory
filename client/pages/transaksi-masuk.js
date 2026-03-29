@@ -1,12 +1,9 @@
-// client/pages/transaksi-masuk.js
 import {
   getItems,
   getTransaksiMasuk,
   addTransaksiMasuk,
   deleteTransaksiMasuk,
 } from "../services/api.js";
-
-let editId = null;
 
 export function TransaksiMasuk() {
   return `
@@ -38,46 +35,19 @@ export function TransaksiMasuk() {
         </div>
       </div>
 
-      <!-- Modal -->
       <div id="modal-add" class="modal hidden">
         <div class="modal-content">
           <h3>Tambah Transaksi Masuk</h3>
           <form id="form-add">
-            
-            <div class="form-group">
-              <label>Kode Barang</label>
-             <input id="kode" />
-            </div>
+            <input id="kode" placeholder="Kode barang"/>
+            <input id="nama-barang" placeholder="Nama barang"/>
+            <input id="jumlah" type="number" min="1" required />
+            <input id="supplier" placeholder="Supplier"/>
+            <input id="penerima" placeholder="Penerima"/>
+            <input id="keterangan" placeholder="Keterangan"/>
 
-            <div class="form-group">
-              <label>Nama Barang</label>
-             <input id="nama-barang" />
-            </div>
-
-            <div class="form-group">
-              <label>Jumlah</label>
-              <input id="jumlah" type="number" min="1" required />
-            </div>
-
-            <div class="form-group">
-              <label>Supplier</label>
-              <input id="supplier" />
-            </div>
-
-            <div class="form-group">
-              <label>Penerima</label>
-              <input id="penerima" />
-            </div>
-
-            <div class="form-group">
-              <label>Keterangan</label>
-              <input id="keterangan" />
-            </div>
-
-            <div class="form-actions">
-              <button type="submit" class="btn-primary">Simpan</button>
-              <button type="button" id="btn-cancel" class="btn-outline">Batal</button>
-            </div>
+            <button type="submit">Simpan</button>
+            <button type="button" id="btn-cancel">Batal</button>
           </form>
         </div>
       </div>
@@ -91,38 +61,40 @@ export function initTransaksiMasuk() {
   document.getElementById("btn-add").addEventListener("click", openAdd);
   document.getElementById("btn-cancel").addEventListener("click", closeModal);
 
-  document.getElementById("form-add").addEventListener("submit", (e) => {
-    e.preventDefault();
+  document
+    .getElementById("form-add")
+    .addEventListener("submit", async (e) => {
+      e.preventDefault();
 
-    const payload = {
-      kode: document.getElementById("kode").value,
-      jumlah: Number(document.getElementById("jumlah").value),
-      supplier: document.getElementById("supplier").value,
-      penerima: document.getElementById("penerima").value,
-      keterangan: document.getElementById("keterangan").value,
-    };
+      const payload = {
+        kode: document.getElementById("kode").value,
+        jumlah: Number(document.getElementById("jumlah").value),
+        supplier: document.getElementById("supplier").value,
+        penerima: document.getElementById("penerima").value,
+        keterangan: document.getElementById("keterangan").value,
+      };
 
-    if (!payload.kode || payload.jumlah <= 0) {
-      alert("Pilih barang dan isi jumlah dengan benar");
-      return;
-    }
+      if (!payload.kode || payload.jumlah <= 0) {
+        alert("Isi data dengan benar");
+        return;
+      }
 
-    addTransaksiMasuk(payload);
+      await addTransaksiMasuk(payload);
 
-    closeModal();
-    e.target.reset();
-    renderTable();
+      closeModal();
+      e.target.reset();
+      renderTable();
 
-    alert("Transaksi berhasil disimpan");
-  });
+      alert("Transaksi berhasil");
+    });
 }
 
-function renderTable() {
-  const data = getTransaksiMasuk();
+async function renderTable() {
+  const data = await getTransaksiMasuk();
   const tbody = document.getElementById("transaksi-masuk-tbody");
 
   if (!data.length) {
-    tbody.innerHTML = `<tr><td colspan="10" class="text-center">Belum ada transaksi</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="10">Belum ada transaksi</td></tr>`;
     return;
   }
 
@@ -140,20 +112,17 @@ function renderTable() {
         <td>${trx.ruangan || "-"}</td>
         <td>${trx.keterangan || "-"}</td>
         <td>
-          <button class="btn-sm btn-danger" data-delete="${trx.id}">
-            Hapus
-          </button>
+          <button data-id="${trx.id}">Hapus</button>
         </td>
       </tr>
-    `,
+    `
     )
     .join("");
 
-  tbody.querySelectorAll("[data-delete]").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const id = Number(btn.dataset.delete);
-      if (confirm("Hapus transaksi ini?")) {
-        deleteTransaksiMasuk(id);
+  tbody.querySelectorAll("[data-id]").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      if (confirm("Hapus?")) {
+        await deleteTransaksiMasuk(Number(btn.dataset.id));
         renderTable();
       }
     });
@@ -169,6 +138,7 @@ function closeModal() {
 }
 
 function toggleModal(show) {
-  const modal = document.getElementById("modal-add");
-  modal.classList.toggle("hidden", !show);
+  document
+    .getElementById("modal-add")
+    .classList.toggle("hidden", !show);
 }
