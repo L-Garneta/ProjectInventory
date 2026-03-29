@@ -1,7 +1,6 @@
 // client/app.js
 import { loadPage } from "./router.js";
 import { Navbar, initNavbar } from "./components/navbar.js";
-import { initStore } from "./services/data-store.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     // init data store (seed pertama kali)

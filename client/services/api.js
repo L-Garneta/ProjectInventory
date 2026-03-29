@@ -67,6 +67,11 @@ export async function addTransaksiMasuk(data) {
     return await res.json();
 }
 
+// GET semua transaksi masuk
+export async function getTransaksiMasuk() {
+    const res = await fetch(`${BASE_URL}/transaksi-masuk`);
+    return await res.json();
+}
 // HAPUS
 export async function deleteTransaksiMasuk(id) {
     await fetch(`${BASE_URL}/transaksi-masuk/${id}`, {
@@ -85,4 +90,10 @@ export async function addTransaksiKeluar(data) {
     });
 
     return await res.json();
+}
+
+export async function clearTransaksiKeluar() {
+    await fetch(`${BASE_URL}/transaksi-keluar`, {
+        method: "DELETE"
+    });
 }
