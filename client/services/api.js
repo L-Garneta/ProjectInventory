@@ -97,3 +97,18 @@ export async function clearTransaksiKeluar() {
         method: "DELETE"
     });
 }
+
+// ================= TRANSAKSI KELUAR =================
+
+// GET semua transaksi keluar
+export async function getTransaksiKeluar() {
+    const res = await fetch(`${BASE_URL}/transaksi-keluar`);
+    return await res.json();
+}
+
+// DELETE transaksi keluar
+export async function deleteTransaksiKeluar(id) {
+    await fetch(`${BASE_URL}/transaksi-keluar/${id}`, {
+        method: "DELETE"
+    });
+}

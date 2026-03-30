@@ -4,7 +4,7 @@ import { Navbar, initNavbar } from "./components/navbar.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     // init data store (seed pertama kali)
-    initStore();
+    // initStore();
 
     // render navbar
     document.getElementById("navbar").innerHTML = Navbar();
