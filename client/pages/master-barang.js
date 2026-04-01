@@ -1,4 +1,3 @@
-// client/pages/master-barang.js
 import { getItems, addItem, updateItem, deleteItem } from "../services/api.js";
 
 let editKode = null; // null = mode tambah, selain itu = mode edit
@@ -58,7 +57,7 @@ export function MasterBarang() {
             </div>
             <div class="form-group">
               <label>Min Stok</label>
-              <input id="stokMin" type="number" min="0" />
+              <input id="stok_minimum" type="number" min="0" />
             </div>
             <div class="form-group">
               <label>Satuan</label>
@@ -87,7 +86,7 @@ export function initMasterBarang() {
     closeModal();
   });
 
-  document.getElementById("form-add").addEventListener("submit", (e) => {
+  document.getElementById("form-add").addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const item = {
@@ -96,7 +95,7 @@ export function initMasterBarang() {
       kategori: document.getElementById("kategori").value.trim(),
       ruangan: document.getElementById("ruangan").value.trim(),
       stok: Number(document.getElementById("stok").value || 0),
-      stokMin: Number(document.getElementById("stokMin").value || 0),
+      stok_minimum: Number(document.getElementById("stok_minimum").value || 0),
       satuan: document.getElementById("satuan").value.trim() || "pcs",
     };
 
@@ -107,24 +106,25 @@ export function initMasterBarang() {
 
     if (editKode) {
       // mode edit
-      updateItem(editKode, item);
+      await updateItem(editKode, item);
     } else {
       // mode tambah
-      addItem(item);
+      await addItem(item);
     }
 
     closeModal();
     e.target.reset();
-    renderTable();
-
-    alert("Data tersimpan. Cek Dashboard untuk update terbaru.");
+    await renderTable();
   });
 }
 
-function renderTable() {
-  const items = getItems();
+async function renderTable() {
   const tbody = document.getElementById("master-barang-tbody");
+  if (!tbody) return;
 
+  tbody.innerHTML = `<tr><td colspan="8">Loading...</td></tr>`;
+
+  const items = await getItems();
   if (!items.length) {
     tbody.innerHTML = `<tr><td colspan="8" class="text-center">Belum ada data</td></tr>`;
     return;
@@ -133,37 +133,37 @@ function renderTable() {
   tbody.innerHTML = items
     .map(
       (item) => `
-      <tr>
-        <td>${item.kode}</td>
-        <td>${item.nama}</td>
-        <td>${item.kategori || "-"}</td>
-        <td>${item.ruangan || "-"}</td>
-        <td>${item.stok}</td>
-        <td>${item.stokMin}</td>
-        <td>${item.satuan || "-"}</td>
-        <td>
-          <button class="btn-sm btn-outline" data-edit="${item.kode}">Edit✏️</button>
-          <button class="btn-sm btn-danger" data-delete="${item.kode}">Hapus</button>
-        </td>
-      </tr>
-    `
+    <tr>
+      <td>${item.kode}</td>
+      <td>${item.nama}</td>
+      <td>${item.kategori || "-"}</td>
+      <td>${item.ruangan || "-"}</td>
+      <td>${item.stok}</td>
+      <td>${item.stok_minimum}</td>
+      <td>${item.satuan || "-"}</td>
+      <td>
+        <button data-edit="${item.id}">Edit</button>
+        <button data-delete="${item.id}">Hapus</button>
+      </td>
+    </tr>
+  `,
     )
     .join("");
 
   tbody.querySelectorAll("[data-delete]").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const kode = btn.dataset.delete;
-      if (confirm(`Hapus barang ${kode}?`)) {
-        deleteItem(kode);
-        renderTable();
+    btn.addEventListener("click", async () => {
+      const id = Number(btn.dataset.delete);
+      if (confirm(`Hapus barang ${id}?`)) {
+        await deleteItem(id);
+        await renderTable();
       }
     });
   });
 
   tbody.querySelectorAll("[data-edit]").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const kode = btn.dataset.edit;
-      openEdit(kode);
+    btn.addEventListener("click", async () => {
+      const id = Number(btn.dataset.edit);
+      await openEdit(id);
     });
   });
 }
@@ -176,21 +176,23 @@ function openAdd() {
   toggleModal(true);
 }
 
-function openEdit(kode) {
-  const item = getItems().find((i) => i.kode === kode);
+async function openEdit(id) {
+  const items = await getItems();
+  const item = items.find((i) => i.id === id);
+
   if (!item) return;
 
-  editKode = kode;
+  editKode = id;
+
   document.getElementById("modal-title").textContent = "Edit Barang";
   document.getElementById("kode").value = item.kode;
   document.getElementById("nama").value = item.nama;
   document.getElementById("kategori").value = item.kategori || "";
   document.getElementById("ruangan").value = item.ruangan || "";
   document.getElementById("stok").value = item.stok;
-  document.getElementById("stokMin").value = item.stokMin;
+  document.getElementById("stok_minimum").value = item.stok_minimum;
   document.getElementById("satuan").value = item.satuan || "pcs";
 
-  // kode jangan bisa diubah saat edit
   document.getElementById("kode").disabled = true;
 
   toggleModal(true);
