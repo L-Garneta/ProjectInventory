@@ -216,6 +216,7 @@ function toggleModal(show) {
 async function loadItems() {
   const items = await getItems();
   const select = document.getElementById("kode");
+    if (!select) return;
 
   select.innerHTML = `
     <option value="">Pilih barang</option>

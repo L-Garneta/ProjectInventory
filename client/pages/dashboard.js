@@ -57,8 +57,7 @@ export async function initDashboard() {
   try {
     const data = await getDashboardData();
 
-    document.getElementById("total-barang").textContent =
-      data.totalBarang ?? 0;
+    document.getElementById("total-barang").textContent = data.totalBarang ?? 0;
 
     document.getElementById("barang-kritis").textContent =
       data.barangKritis ?? 0;
@@ -69,8 +68,10 @@ export async function initDashboard() {
     document.getElementById("total-keluar").textContent =
       data.totalKeluarBulan ?? 0;
 
-    document.getElementById("bulan-info").textContent =
-      data.bulan ?? "";
+    document.getElementById("bulan-info").textContent = data.bulan ?? "";
+
+    const el = document.getElementById("total-barang");
+    if (!el) return;
 
     const tbody = document.getElementById("kritis-list");
 
@@ -81,10 +82,10 @@ export async function initDashboard() {
           <tr>
             <td>${item.kode}</td>
             <td>${item.nama}</td>
-            <td class="${getStokClass(item.stok, item.stokMin)}">${item.stok}</td>
-            <td>${item.stokMin}</td>
+            <td class="${getStokClass(item.stok, item.stok_minimum)}">${item.stok}</td>
+            <td>${item.stok_minimum}</td>
           </tr>
-        `
+        `,
         )
         .join("");
     } else {

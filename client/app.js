@@ -1,4 +1,3 @@
-// client/app.js
 import { loadPage } from "./router.js";
 import { Navbar, initNavbar } from "./components/navbar.js";
 

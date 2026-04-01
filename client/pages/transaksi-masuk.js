@@ -56,42 +56,55 @@ export function TransaksiMasuk() {
 }
 
 export function initTransaksiMasuk() {
+  const tbody = document.getElementById("transaksi-masuk-tbody");
+  const btnAdd = document.getElementById("btn-add");
+  const btnCancel = document.getElementById("btn-cancel");
+  const form = document.getElementById("form-add");
+
+  // 💥 STOP kalau DOM belum siap
+  if (!tbody || !btnAdd || !btnCancel || !form) {
+    console.warn("DOM transaksi masuk belum siap");
+    return;
+  }
+
+  // ✅ baru jalanin
   renderTable();
 
-  document.getElementById("btn-add").addEventListener("click", openAdd);
-  document.getElementById("btn-cancel").addEventListener("click", closeModal);
+  btnAdd.addEventListener("click", openAdd);
+  btnCancel.addEventListener("click", closeModal);
 
-  document
-    .getElementById("form-add")
-    .addEventListener("submit", async (e) => {
-      e.preventDefault();
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-      const payload = {
-        kode: document.getElementById("kode").value,
-        jumlah: Number(document.getElementById("jumlah").value),
-        supplier: document.getElementById("supplier").value,
-        penerima: document.getElementById("penerima").value,
-        keterangan: document.getElementById("keterangan").value,
-      };
+    const payload = {
+      kode: document.getElementById("kode").value,
+      jumlah: Number(document.getElementById("jumlah").value),
+      supplier: document.getElementById("supplier").value,
+      penerima: document.getElementById("penerima").value,
+      keterangan: document.getElementById("keterangan").value,
+    };
 
-      if (!payload.kode || payload.jumlah <= 0) {
-        alert("Isi data dengan benar");
-        return;
-      }
+    if (!payload.kode || payload.jumlah <= 0) {
+      alert("Isi data dengan benar");
+      return;
+    }
 
-      await addTransaksiMasuk(payload);
+    await addTransaksiMasuk(payload);
 
-      closeModal();
-      e.target.reset();
-      renderTable();
+    closeModal();
+    e.target.reset();
 
-      alert("Transaksi berhasil");
-    });
+    renderTable(); // refresh data
+
+    alert("Transaksi berhasil");
+  });
 }
 
 async function renderTable() {
-  const data = await getTransaksiMasuk();
   const tbody = document.getElementById("transaksi-masuk-tbody");
+  if (!tbody) return; // 💥 anti crash
+
+  const data = await getTransaksiMasuk();
 
   if (!data.length) {
     tbody.innerHTML = `<tr><td colspan="10">Belum ada transaksi</td></tr>`;
@@ -101,21 +114,21 @@ async function renderTable() {
   tbody.innerHTML = data
     .map(
       (trx, index) => `
-      <tr>
-        <td>${index + 1}</td>
-        <td>${trx.tanggal}</td>
-        <td>${trx.kode}</td>
-        <td>${trx.nama}</td>
-        <td>${trx.jumlah}</td>
-        <td>${trx.supplier || "-"}</td>
-        <td>${trx.penerima || "-"}</td>
-        <td>${trx.ruangan || "-"}</td>
-        <td>${trx.keterangan || "-"}</td>
-        <td>
-          <button data-id="${trx.id}">Hapus</button>
-        </td>
-      </tr>
-    `
+    <tr>
+      <td>${index + 1}</td>
+      <td>${trx.tanggal}</td>
+      <td>${trx.kode}</td>
+      <td>${trx.nama}</td>
+      <td>${trx.jumlah}</td>
+      <td>${trx.supplier || "-"}</td>
+      <td>${trx.penerima || "-"}</td>
+      <td>${trx.ruangan || "-"}</td>
+      <td>${trx.keterangan || "-"}</td>
+      <td>
+        <button data-id="${trx.id}">Hapus</button>
+      </td>
+    </tr>
+  `,
     )
     .join("");
 
@@ -138,7 +151,5 @@ function closeModal() {
 }
 
 function toggleModal(show) {
-  document
-    .getElementById("modal-add")
-    .classList.toggle("hidden", !show);
+  document.getElementById("modal-add").classList.toggle("hidden", !show);
 }

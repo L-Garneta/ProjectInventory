@@ -92,8 +92,8 @@ export function initLaporan() {
 
     tbody.innerHTML = items.length
       ? items
-        .map(
-          (item) => `
+          .map(
+            (item) => `
         <tr>
           <td>${item.kode}</td>
           <td>${item.nama}</td>
@@ -102,8 +102,8 @@ export function initLaporan() {
           <td>${item.stok}</td>
         </tr>
       `,
-        )
-        .join("")
+          )
+          .join("")
       : `<tr><td colspan="5" class="text-center">Tidak ada data</td></tr>`;
   }
 
@@ -138,8 +138,8 @@ export function initLaporan() {
 
     tbody.innerHTML = data.length
       ? data
-        .map(
-          (trx) => `
+          .map(
+            (trx) => `
         <tr>
           <td>${trx.tanggal}</td>
           <td>${trx.kode}</td>
@@ -147,8 +147,8 @@ export function initLaporan() {
           <td>${trx.jumlah}</td>
         </tr>
       `,
-        )
-        .join("")
+          )
+          .join("")
       : `<tr><td colspan="4" class="text-center">Tidak ada data ${title}</td></tr>`;
   }
 
@@ -177,8 +177,8 @@ export function initLaporan() {
         <td>${item.kode}</td>
         <td>${item.nama}</td>
         <td>${item.stok}</td>
-        <td>${item.stokMin}</td>
-        <td>${item.stok <= item.stokMin ? "Perlu Restock" : "Aman"}</td>
+        <td>${item.stok_minimum}</td>
+        <td>${item.stok <= item.stok_minimum ? "Perlu Restock" : "Aman"}</td>
       </tr>
     `,
       )
