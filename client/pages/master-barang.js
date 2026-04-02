@@ -15,13 +15,13 @@ export function MasterBarang() {
           <table class="table">
             <thead>
               <tr>
-                <th>Kode</th>
+                <th>Kode Barang</th>
                 <th>Nama Barang</th>
                 <th>Kategori</th>
                 <th>Ruangan</th>
+                <th>Satuan</th>
                 <th>Stok</th>
                 <th>Min Stok</th>
-                <th>Satuan</th>
                 <th>Aksi</th>
               </tr>
             </thead>
@@ -52,16 +52,16 @@ export function MasterBarang() {
               <input id="ruangan" />
             </div>
             <div class="form-group">
+              <label>Satuan</label>
+              <input id="satuan" />
+            </div>
+            <div class="form-group">
               <label>Stok</label>
               <input id="stok" type="number" min="0" />
             </div>
             <div class="form-group">
               <label>Min Stok</label>
               <input id="stok_minimum" type="number" min="0" />
-            </div>
-            <div class="form-group">
-              <label>Satuan</label>
-              <input id="satuan" placeholder="pcs" />
             </div>
 
             <div class="form-actions">
@@ -94,9 +94,9 @@ export function initMasterBarang() {
       nama: document.getElementById("nama").value.trim(),
       kategori: document.getElementById("kategori").value.trim(),
       ruangan: document.getElementById("ruangan").value.trim(),
+      satuan: document.getElementById("satuan").value.trim(),
       stok: Number(document.getElementById("stok").value || 0),
       stok_minimum: Number(document.getElementById("stok_minimum").value || 0),
-      satuan: document.getElementById("satuan").value.trim() || "pcs",
     };
 
     if (!item.kode || !item.nama) {
@@ -138,9 +138,9 @@ async function renderTable() {
       <td>${item.nama}</td>
       <td>${item.kategori || "-"}</td>
       <td>${item.ruangan || "-"}</td>
+      <td>${item.satuan || "-"}</td>
       <td>${item.stok}</td>
       <td>${item.stok_minimum}</td>
-      <td>${item.satuan || "-"}</td>
       <td>
         <button data-edit="${item.id}">Edit</button>
         <button data-delete="${item.id}">Hapus</button>
@@ -189,9 +189,9 @@ async function openEdit(id) {
   document.getElementById("nama").value = item.nama;
   document.getElementById("kategori").value = item.kategori || "";
   document.getElementById("ruangan").value = item.ruangan || "";
+  document.getElementById("satuan").value = item.satuan || "";
   document.getElementById("stok").value = item.stok;
   document.getElementById("stok_minimum").value = item.stok_minimum;
-  document.getElementById("satuan").value = item.satuan || "pcs";
 
   document.getElementById("kode").disabled = true;
 

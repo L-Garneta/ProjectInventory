@@ -19,7 +19,7 @@ export function TransaksiMasuk() {
             <thead>
               <tr>
                 <th>No</th>
-                <th>Tanggal</th>
+                <th>Tanggal Masuk</th>
                 <th>Kode</th>
                 <th>Nama Barang</th>
                 <th>Jumlah</th>
