@@ -41,7 +41,7 @@ export function TransaksiKeluar() {
                 <th>Kode</th>
                 <th>Nama Barang</th>
                 <th>Jumlah</th>
-                <th>Penerima</th>
+                <th>Unit</th>
                 <th>Keterangan</th>
                 <th>Aksi</th>
               </tr>
@@ -77,8 +77,8 @@ export function TransaksiKeluar() {
             </div>
 
             <div class="form-group">
-              <label>Penerima</label>
-              <input id="penerima" />
+              <label>Unit</label>
+              <input id="unit" />
             </div>
 
             <div class="form-group">
@@ -115,25 +115,27 @@ export function initTransaksiKeluar() {
   });
 
   // submit transaksi
-  document.getElementById("form-keluar").addEventListener("submit", async (e) => {
-    e.preventDefault();
+  document
+    .getElementById("form-keluar")
+    .addEventListener("submit", async (e) => {
+      e.preventDefault();
 
-    try {
-      await addTransaksiKeluar({
-        kode: document.getElementById("kode").value,
-        jumlah: document.getElementById("jumlah").value,
-        penerima: document.getElementById("penerima").value,
-        keterangan: document.getElementById("keterangan").value,
-      });
+      try {
+        await addTransaksiKeluar({
+          kode: document.getElementById("kode").value,
+          jumlah: document.getElementById("jumlah").value,
+          unit: document.getElementById("unit").value,
+          keterangan: document.getElementById("keterangan").value,
+        });
 
-      alert("Transaksi berhasil");
-      toggleModal(false);
-      e.target.reset();
-      renderTable();
-    } catch (err) {
-      alert(err.message);
-    }
-  });
+        alert("Transaksi berhasil");
+        toggleModal(false);
+        e.target.reset();
+        renderTable();
+      } catch (err) {
+        alert(err.message);
+      }
+    });
 
   // hapus semua
   document.getElementById("btn-clear").addEventListener("click", async () => {
@@ -189,7 +191,7 @@ async function renderTable(useFilter = false) {
         <td>${trx.kode}</td>
         <td>${trx.nama}</td>
         <td>${trx.jumlah}</td>
-        <td>${trx.penerima || "-"}</td>
+        <td>${trx.unit || "-"}</td>
         <td>${trx.keterangan || "-"}</td>
         <td>
           <button class="btn-danger-sm" data-id="${trx.id}">
@@ -216,14 +218,18 @@ function toggleModal(show) {
 async function loadItems() {
   const items = await getItems();
   const select = document.getElementById("kode");
-    if (!select) return;
+  if (!select) return;
 
   select.innerHTML = `
     <option value="">Pilih barang</option>
-    ${items.map(i => `
+    ${items
+      .map(
+        (i) => `
       <option value="${i.kode}">
         ${i.kode} - ${i.nama} (Stok: ${i.stok})
       </option>
-    `).join("")}
+    `,
+      )
+      .join("")}
   `;
 }
