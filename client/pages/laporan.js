@@ -35,12 +35,33 @@ export function Laporan() {
         </button>
       </div>
 
-      <div class="card" id="laporan-area">
+      <div class="card card-soft shadow-sm">
         <div class="card-body">
-          <table class="table" id="laporan-table">
-            <thead id="laporan-thead"></thead>
-            <tbody id="laporan-tbody"></tbody>
+
+          <table class="table table-striped table-hover align-middle">
+
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>Tanggal</th>
+                <th>Kode</th>
+                <th>Nama Barang</th>
+                <th>Masuk</th>
+                <th>Keluar</th>
+                <th>Stok</th>
+              </tr>
+            </thead>
+
+            <tbody id="laporan-body">
+              <tr>
+                <td colspan="7" class="text-center text-muted">
+                  Belum ada data
+                </td>
+              </tr>
+            </tbody>
+
           </table>
+
         </div>
       </div>
 

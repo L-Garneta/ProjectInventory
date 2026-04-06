@@ -13,10 +13,12 @@ export function TransaksiMasuk() {
         <button id="btn-add" class="btn-primary">+ Tambah Transaksi</button>
       </div>
 
-      <div class="card">
+      <div class="card card-soft shadow-sm">
         <div class="card-body">
-          <table class="table">
-            <thead>
+
+          <table class="table table-striped table-hover align-middle">
+      
+            <thead class="table-light">
               <tr>
                 <th>No</th>
                 <th>Tanggal Masuk</th>
@@ -39,8 +41,7 @@ export function TransaksiMasuk() {
         <div class="modal-content">
           <h3>Tambah Transaksi Masuk</h3>
           <form id="form-add">
-            <input id="kode" placeholder="Kode barang"/>
-            <input id="nama-barang" placeholder="Nama barang"/>
+            <select id="item_id" required></select>
             <input id="jumlah" type="number" min="1" required />
             <input id="supplier" placeholder="Supplier"/>
             <input id="penerima" placeholder="Penerima"/>
@@ -69,6 +70,7 @@ export function initTransaksiMasuk() {
 
   // ✅ baru jalanin
   renderTable();
+  loadItems();
 
   btnAdd.addEventListener("click", openAdd);
   btnCancel.addEventListener("click", closeModal);
@@ -77,14 +79,14 @@ export function initTransaksiMasuk() {
     e.preventDefault();
 
     const payload = {
-      kode: document.getElementById("kode").value,
+      item_id: Number(document.getElementById("item_id").value),
       jumlah: Number(document.getElementById("jumlah").value),
       supplier: document.getElementById("supplier").value,
       penerima: document.getElementById("penerima").value,
       keterangan: document.getElementById("keterangan").value,
     };
 
-    if (!payload.kode || payload.jumlah <= 0) {
+    if (!payload.item_id || payload.jumlah <= 0) {
       alert("Isi data dengan benar");
       return;
     }
@@ -100,11 +102,39 @@ export function initTransaksiMasuk() {
   });
 }
 
+async function loadItems() {
+  const select = document.getElementById("item_id");
+  if (!select) return;
+
+  const items = await getItems();
+
+  select.innerHTML = `
+    <option value="">Pilih Barang</option>
+    ${items
+      .map(
+        (item) =>
+          `<option value="${item.id}">
+            ${item.kode} - ${item.nama}
+          </option>`,
+      )
+      .join("")}
+  `;
+}
+
 async function renderTable() {
   const tbody = document.getElementById("transaksi-masuk-tbody");
-  if (!tbody) return; // 💥 anti crash
+  if (!tbody) return;
 
-  const data = await getTransaksiMasuk();
+  tbody.innerHTML = `<tr><td colspan="10">Loading...</td></tr>`;
+
+  let data = []; // 🔥 pindahin ke luar
+
+  try {
+    data = await getTransaksiMasuk();
+  } catch (e) {
+    tbody.innerHTML = `<tr><td colspan="10">Gagal load data</td></tr>`;
+    return; // 🔥 STOP di sini
+  }
 
   if (!data.length) {
     tbody.innerHTML = `<tr><td colspan="10">Belum ada transaksi</td></tr>`;
@@ -114,21 +144,27 @@ async function renderTable() {
   tbody.innerHTML = data
     .map(
       (trx, index) => `
-    <tr>
-      <td>${index + 1}</td>
-      <td>${trx.tanggal}</td>
-      <td>${trx.kode}</td>
-      <td>${trx.nama}</td>
-      <td>${trx.jumlah}</td>
-      <td>${trx.supplier || "-"}</td>
-      <td>${trx.penerima || "-"}</td>
-      <td>${trx.ruangan || "-"}</td>
-      <td>${trx.keterangan || "-"}</td>
-      <td>
-        <button data-id="${trx.id}">Hapus</button>
-      </td>
-    </tr>
-  `,
+      <tr>
+        <td>${index + 1}</td>
+        <td>${trx.tanggal ? formatDate(trx.tanggal) : "-"}</td>
+        <td>${trx.item?.kode ?? "-"}</td>
+        <td>${trx.item?.nama ?? "-"}</td>
+        <td>${trx.jumlah}</td>
+        <td>${trx.supplier || "-"}</td>
+        <td>${trx.penerima || "-"}</td>
+        <td>${trx.ruangan || "-"}</td>
+        <td>
+          <span class="badge bg-secondary">
+            ${trx.keterangan || "-"}
+          </span>
+        </td>
+        <td>
+          <button class="btn btn-sm btn-outline-danger" data-id="${trx.id}">
+            🗑 Hapus
+          </button>
+        </td>
+      </tr>
+    `,
     )
     .join("");
 
@@ -152,4 +188,8 @@ function closeModal() {
 
 function toggleModal(show) {
   document.getElementById("modal-add").classList.toggle("hidden", !show);
+}
+
+function formatDate(date) {
+  return new Date(date).toLocaleDateString("id-ID");
 }

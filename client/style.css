@@ -1,46 +1,30 @@
+body {
+  font-family: 'Roboto Slab', serif;
+  background-color: #f8f9fa;
+}
+
 /* SIDEBAR */
 .sidebar {
   width: 230px;
   height: 100vh;
-  background-color: #b8a890;
-  padding: 20px;
-  position: fixed;
-}
-
-.sidebar-container {
-  display: block;
-}
-
-.nav-brand {
-    font-weight: 700;
-    letter-spacing: .5px;
-}
-
-.sidebar-menu {
-  list-style: none;
-  padding: 0;
-}
-
-.sidebar-menu li {
-  margin-bottom: 10px;
+  position: fixed;        /* 🔥 ini kunci */
+  top: 0;
+  left: 0;
+  background: linear-gradient(180deg, #3C467B, #50589C);
 }
 
 .nav-link {
-  display: block;
-  padding: 10px;
   border-radius: 8px;
-  text-decoration: none;
-  color: black;
+  padding: 10px;
 }
 
 .nav-link:hover {
-    background: #948470a7;
-    color: #000000;
+  background-color: #636CCB;
 }
 
 .nav-link.active {
-    background: #877969;
-    color: #ffffff;
+  background-color: #6E8CFB;
+  font-weight: bold;
 }
 
 main#app {
@@ -83,6 +67,7 @@ main#app {
     opacity: .8;
 }
 
+/* CARD */
 .card {
     background: #EFE9E3;
     color: #000000;
@@ -99,6 +84,19 @@ main#app {
     padding: 12px 14px;
 }
 
+.card-gradient {
+  background: linear-gradient(135deg, #50589C, #6E8CFB);
+  color: white;
+  border: none;
+  border-radius: 12px;
+}
+
+.card-soft {
+  border-radius: 12px;
+  border: none;
+}
+
+/* TABLE */
 .table {
     width: 100%;
     border-collapse: collapse;
@@ -120,6 +118,15 @@ main#app {
 
 .danger {
     color: #ef4444;
+}
+
+.table thead {
+  background-color: #50589C;
+  color: white;
+}
+
+.table tbody tr:hover {
+  background-color: #f1f3ff;
 }
 
 /* LOGIN */

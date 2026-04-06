@@ -1,121 +1,171 @@
 import { getItems, addItem, updateItem, deleteItem } from "../services/api.js";
 
-let editKode = null; // null = mode tambah, selain itu = mode edit
+let editKode = null;
+let modal;
 
 export function MasterBarang() {
   return `
-    <div class="page">
-      <div class="page-header">
-        <h2>Master Barang</h2>
-        <button id="btn-add" class="btn-primary">+ Tambah Barang</button>
+    <div class="container mt-4">
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="fw-bold">Master Barang</h3>
+    <button id="btn-add" class="btn btn-primary">
+      + Tambah Barang
+    </button>
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="card-body">
+
+      <div class="card card-soft shadow-sm">
+  <div class="card-body">
+
+    <table class="table table-striped table-hover align-middle">
+      
+      <thead class="table-light">
+            <tr>
+              <th>Kode Barang</th>
+              <th>Nama Barang</th>
+              <th>Kategori</th>
+              <th>Ruangan</th>
+              <th>Stok</th>
+              <th>Min Stok</th>
+              <th>Satuan</th>
+              <th width="120">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="master-barang-tbody"></tbody>
+        </table>
       </div>
 
-      <div class="card">
-        <div class="card-body">
-          <table class="table">
-            <thead>
-              <tr>
-                <th>Kode Barang</th>
-                <th>Nama Barang</th>
-                <th>Kategori</th>
-                <th>Ruangan</th>
-                <th>Satuan</th>
-                <th>Stok</th>
-                <th>Min Stok</th>
-                <th>Aksi</th>
-              </tr>
-            </thead>
-            <tbody id="master-barang-tbody"></tbody>
-          </table>
+    </div>
+  </div>
+
+  <!-- MODAL -->
+  <div class="modal fade" id="modal-form">
+    <div class="modal-dialog">
+      <div class="modal-content">
+
+      <h5 class="modal-title" id="modal-title">Form Barang</h5>
+
+        <div class="modal-header">
+          <h5 class="modal-title">Form Barang</h5>
+          <button class="btn-close" data-bs-dismiss="modal"></button>
         </div>
-      </div>
 
-      <!-- Modal Tambah/Edit Barang -->
-      <div id="modal-add" class="modal hidden">
-        <div class="modal-content">
-          <h3 id="modal-title">Tambah Barang</h3>
-          <form id="form-add">
-            <div class="form-group">
-              <label>Kode</label>
-              <input id="kode" required />
-            </div>
-            <div class="form-group">
-              <label>Nama Barang</label>
-              <input id="nama" required />
-            </div>
-            <div class="form-group">
-              <label>Kategori</label>
-              <input id="kategori" />
-            </div>
-            <div class="form-group">
-              <label>Ruangan</label>
-              <input id="ruangan" />
-            </div>
-            <div class="form-group">
-              <label>Satuan</label>
-              <input id="satuan" />
-            </div>
-            <div class="form-group">
-              <label>Stok</label>
-              <input id="stok" type="number" min="0" />
-            </div>
-            <div class="form-group">
-              <label>Min Stok</label>
-              <input id="stok_minimum" type="number" min="0" />
+        <div class="modal-body">
+          <form id="form-barang">
+
+            <div class="mb-3">
+              <label class="form-label">Kode</label>
+              <input id="kode" class="form-control" required />
             </div>
 
-            <div class="form-actions">
-              <button type="submit" class="btn-primary">Simpan</button>
-              <button type="button" id="btn-cancel" class="btn-outline">Batal</button>
+            <div class="mb-3">
+              <label class="form-label">Nama</label>
+              <input id="nama" class="form-control" required />
             </div>
+
+            <div class="mb-3">
+              <label class="form-label">Kategori</label>
+              <input id="kategori" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Ruangan</label>
+              <input id="ruangan" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Stok</label>
+              <input id="stok" type="number" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Stok Minimum</label>
+              <input id="stok_minimum" type="number" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Satuan</label>
+              <input id="satuan" class="form-control" />
+            </div>
+
+            <div class="d-flex justify-content-end gap-2">
+              <button type="submit" class="btn btn-success">
+                Simpan
+              </button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                Batal
+              </button>
+            </div>
+
           </form>
         </div>
+
       </div>
     </div>
+  </div>
+
+</div>
   `;
 }
 
 export function initMasterBarang() {
+  modal = new bootstrap.Modal(document.getElementById("modal-form"));
+
   renderTable();
 
+  // tombol tambah
   document.getElementById("btn-add").addEventListener("click", () => {
-    openAdd();
+    editKode = null;
+    document.getElementById("form-barang").reset();
+    document.getElementById("kode").disabled = false;
+    document.getElementById("modal-title").textContent = "Tambah Barang";
+    modal.show();
   });
 
-  document.getElementById("btn-cancel").addEventListener("click", () => {
-    closeModal();
-  });
+  // submit form
+  document
+    .getElementById("form-barang")
+    .addEventListener("submit", async (e) => {
+      e.preventDefault();
 
-  document.getElementById("form-add").addEventListener("submit", async (e) => {
-    e.preventDefault();
+      const item = {
+        kode: document.getElementById("kode").value.trim(),
+        nama: document.getElementById("nama").value.trim(),
+        kategori: document.getElementById("kategori").value.trim(),
+        ruangan: document.getElementById("ruangan").value.trim(),
+        satuan: document.getElementById("satuan").value.trim(),
+        stok: Number(document.getElementById("stok").value || 0),
+        stok_minimum: Number(
+          document.getElementById("stok_minimum").value || 0,
+        ),
+        harga_beli: 0,
+        harga_jual: 0,
+      };
 
-    const item = {
-      kode: document.getElementById("kode").value.trim(),
-      nama: document.getElementById("nama").value.trim(),
-      kategori: document.getElementById("kategori").value.trim(),
-      ruangan: document.getElementById("ruangan").value.trim(),
-      satuan: document.getElementById("satuan").value.trim(),
-      stok: Number(document.getElementById("stok").value || 0),
-      stok_minimum: Number(document.getElementById("stok_minimum").value || 0),
-    };
+      // VALIDASI DULU
+      if (!item.kode || !item.nama) {
+        alert("Kode dan Nama wajib diisi");
+        return;
+      }
 
-    if (!item.kode || !item.nama) {
-      alert("Kode dan Nama wajib diisi");
-      return;
-    }
+      try {
+        if (editKode) {
+          await updateItem(editKode, item);
+        } else {
+          await addItem(item);
+        }
 
-    if (editKode) {
-      // mode edit
-      await updateItem(editKode, item);
-    } else {
-      // mode tambah
-      await addItem(item);
-    }
-
-    closeModal();
-    e.target.reset();
-    await renderTable();
-  });
+        alert("Data berhasil disimpan");
+        modal.hide();
+        e.target.reset();
+        await renderTable();
+      } catch (e) {
+        alert("Kode sudah dipakai!");
+      }
+    });
 }
 
 async function renderTable() {
@@ -125,8 +175,9 @@ async function renderTable() {
   tbody.innerHTML = `<tr><td colspan="8">Loading...</td></tr>`;
 
   const items = await getItems();
+
   if (!items.length) {
-    tbody.innerHTML = `<tr><td colspan="8" class="text-center">Belum ada data</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="8">Belum ada data</td></tr>`;
     return;
   }
 
@@ -138,12 +189,18 @@ async function renderTable() {
       <td>${item.nama}</td>
       <td>${item.kategori || "-"}</td>
       <td>${item.ruangan || "-"}</td>
-      <td>${item.satuan || "-"}</td>
-      <td>${item.stok}</td>
+      <td class="${item.stok <= item.stok_minimum ? "text-danger fw-bold" : ""}">
+        ${item.stok}
+      </td>
       <td>${item.stok_minimum}</td>
+      <td>${item.satuan || "-"}</td>
       <td>
-        <button data-edit="${item.id}">Edit</button>
-        <button data-delete="${item.id}">Hapus</button>
+        <button class="btn btn-warning btn-sm" data-edit="${item.id}">
+          Edit
+        </button>
+        <button class="btn btn-danger btn-sm" data-delete="${item.id}">
+          Hapus
+        </button>
       </td>
     </tr>
   `,
@@ -168,18 +225,9 @@ async function renderTable() {
   });
 }
 
-function openAdd() {
-  editKode = null;
-  document.getElementById("modal-title").textContent = "Tambah Barang";
-  document.getElementById("form-add").reset();
-  document.getElementById("kode").disabled = false;
-  toggleModal(true);
-}
-
 async function openEdit(id) {
   const items = await getItems();
   const item = items.find((i) => i.id === id);
-
   if (!item) return;
 
   editKode = id;
@@ -195,15 +243,5 @@ async function openEdit(id) {
 
   document.getElementById("kode").disabled = true;
 
-  toggleModal(true);
-}
-
-function closeModal() {
-  editKode = null;
-  toggleModal(false);
-}
-
-function toggleModal(show) {
-  const modal = document.getElementById("modal-add");
-  modal.classList.toggle("hidden", !show);
+  modal.show();
 }
