@@ -3,6 +3,7 @@ import {
   getPurchasing,
   addPurchasing,
   updatePurchasing,
+  deletePurchasing,
 } from "../services/api.js";
 
 export function Purchasing() {
@@ -29,6 +30,7 @@ export function Purchasing() {
                     <th>Jumlah</th>
                     <th>Supplier</th>
                     <th>Status</th>
+                    <th>Aksi</th>
                 </tr>
             </thead>
         <tbody id="purchasing-body"></tbody>
@@ -89,6 +91,21 @@ export function initPurchasing() {
   setTimeout(() => {
     renderTable();
     loadItems();
+
+    const tbody = document.getElementById("purchasing-body");
+    if (!tbody) return;
+
+    // ✅ EVENT DELETE (PINDAH KE SINI)
+    tbody.addEventListener("click", async (e) => {
+      if (!e.target.classList.contains("delete-btn")) return;
+
+      const id = e.target.dataset.id;
+
+      if (!confirm("Yakin mau hapus?")) return;
+
+      await deletePurchasing(id);
+      renderTable();
+    });
   }, 0);
 
   const modal = new bootstrap.Modal(document.getElementById("modalForm"));
@@ -144,6 +161,11 @@ async function renderTable() {
           <select class="form-select form-select-sm status-select" data-id="${p.id}">
             ${statusOption(p.status)}
           </select>
+        </td>
+        <td>
+            <button class="btn btn-sm btn-outline-danger delete-btn" data-id="${p.id}">
+                Hapus 🗑
+            </button>
         </td>
       </tr>
     `,

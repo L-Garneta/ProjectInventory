@@ -164,3 +164,11 @@ export async function updatePurchasing(id, data) {
   if (!res.ok) throw new Error(result.message);
   return result;
 }
+
+export async function deletePurchasing(id) {
+  const res = await fetch(`${BASE_URL}/purchasing/${id}`, {
+    method: "DELETE",
+  });
+
+  return await res.json();
+}
