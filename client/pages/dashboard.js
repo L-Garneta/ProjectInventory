@@ -4,36 +4,44 @@ import { getStokClass } from "../utils/helper.js";
 export function Dashboard() {
   return `
     <div class="dashboard">
-      <div class="stats-grid">
-        <div class="stat-card">
-          <h4>Total Barang</h4>
-          <div class="stat-value" id="total-barang">0</div>
+      <div class="row g-3 mb-4">
+
+        <div class="col-md-3">
+          <div class="card card-gradient p-3 shadow-sm">
+            <h6>Total Barang</h6>
+            <h3 id="total-barang">0</h3>
+          </div>
         </div>
 
-        <div class="stat-card">
-          <h4>Barang Kritis</h4>
-          <div class="stat-value" id="barang-kritis">0</div>
+        <div class="col-md-3">
+          <div class="card card-gradient p-3 shadow-sm">
+            <h6>Barang Kritis</h6>
+            <h3 id="barang-kritis">0</h3>
+          </div>
         </div>
 
-        <div class="stat-card">
-          <h4>Barang Masuk (Bulan Ini)</h4>
-          <div class="stat-value" id="total-masuk">0</div>
-          <div class="stat-label" id="bulan-info"></div>
+        <div class="col-md-3">
+          <div class="card card-gradient p-3 shadow-sm">
+            <h6>Barang Masuk</h6>
+            <h3 id="total-masuk">0</h3>
+          </div>
         </div>
 
-        <div class="stat-card">
-          <h4>Barang Keluar (Bulan Ini)</h4>
-          <div class="stat-value" id="total-keluar">0</div>
+        <div class="col-md-3">
+          <div class="card card-gradient p-3 shadow-sm">
+            <h6>Barang Keluar</h6>
+            <h3 id="total-keluar">0</h3>
+          </div>
         </div>
+
       </div>
 
-      <div class="card">
-        <div class="card-header">
-          <h3>Barang Kritis</h3>
-        </div>
+      <div class="card card-soft shadow-sm">
         <div class="card-body">
-          <table class="table">
-            <thead>
+          <small id="bulan-info" class="text-muted"></small>
+
+          <table class="table table-striped table-hover align-middle">
+            <thead class="table-light">
               <tr>
                 <th>Kode</th>
                 <th>Nama Barang</th>
@@ -41,6 +49,7 @@ export function Dashboard() {
                 <th>Min Stok</th>
               </tr>
             </thead>
+
             <tbody id="kritis-list">
               <tr>
                 <td colspan="4" class="text-center">Memuat data...</td>
@@ -57,23 +66,21 @@ export async function initDashboard() {
   try {
     const data = await getDashboardData();
 
-    document.getElementById("total-barang").textContent = data.totalBarang ?? 0;
-
-    document.getElementById("barang-kritis").textContent =
-      data.barangKritis ?? 0;
-
-    document.getElementById("total-masuk").textContent =
-      data.totalMasukBulan ?? 0;
-
-    document.getElementById("total-keluar").textContent =
-      data.totalKeluarBulan ?? 0;
-
-    document.getElementById("bulan-info").textContent = data.bulan ?? "";
-
-    const el = document.getElementById("total-barang");
-    if (!el) return;
-
+    const totalBarangEl = document.getElementById("total-barang");
+    const barangKritisEl = document.getElementById("barang-kritis");
+    const masukEl = document.getElementById("total-masuk");
+    const keluarEl = document.getElementById("total-keluar");
+    const bulanEl = document.getElementById("bulan-info");
     const tbody = document.getElementById("kritis-list");
+
+    // ❗ kalau bukan halaman dashboard → stop
+    if (!totalBarangEl || !tbody) return;
+
+    totalBarangEl.textContent = data.totalBarang ?? 0;
+    barangKritisEl.textContent = data.barangKritis ?? 0;
+    masukEl.textContent = data.totalMasukBulan ?? 0;
+    keluarEl.textContent = data.totalKeluarBulan ?? 0;
+    bulanEl.textContent = data.bulan ?? "";
 
     if (data.barangKritisList?.length) {
       tbody.innerHTML = data.barangKritisList
@@ -82,7 +89,9 @@ export async function initDashboard() {
           <tr>
             <td>${item.kode}</td>
             <td>${item.nama}</td>
-            <td class="${getStokClass(item.stok, item.stok_minimum)}">${item.stok}</td>
+            <td class="${item.stok <= item.stok_minimum ? "text-danger fw-bold" : ""}">
+              ${item.stok}
+            </td>
             <td>${item.stok_minimum}</td>
           </tr>
         `,
@@ -97,10 +106,14 @@ export async function initDashboard() {
     }
   } catch (e) {
     console.error(e);
-    document.getElementById("kritis-list").innerHTML = `
-      <tr>
-        <td colspan="4" class="text-center">Gagal memuat data</td>
-      </tr>
-    `;
+
+    const tbody = document.getElementById("kritis-list");
+    if (tbody) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="4" class="text-center text-danger">Gagal memuat data</td>
+        </tr>
+      `;
+    }
   }
 }

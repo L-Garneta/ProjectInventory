@@ -2,14 +2,18 @@ import { loadPage } from "./router.js";
 import { Navbar, initNavbar } from "./components/navbar.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-    // init data store (seed pertama kali)
-    // initStore();
+  const navbarEl = document.getElementById("navbar");
 
-    // render navbar
-    document.getElementById("navbar").innerHTML = Navbar();
+  if (navbarEl) {
+    navbarEl.innerHTML = Navbar();
     initNavbar((page) => loadPage(page));
+  }
 
-    // redirect awal berdasarkan login
-    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-    loadPage(isLoggedIn ? "dashboard" : "login");
+  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+  loadPage(isLoggedIn ? "dashboard" : "login");
+});
+
+window.addEventListener("hashchange", () => {
+  const page = location.hash.slice(2); // buang "#/"
+  loadPage(page);
 });

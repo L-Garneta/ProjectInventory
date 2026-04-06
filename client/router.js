@@ -7,15 +7,22 @@ import {
 } from "./pages/transaksi-keluar.js";
 import { Laporan, initLaporan } from "./pages/laporan.js";
 import { Login, initLogin } from "./pages/login.js";
+import { Purchasing, initPurchasing } from "./pages/purchasing.js";
 
 function isLoggedIn() {
   return localStorage.getItem("isLoggedIn") === "true";
 }
 
-export function loadPage(page) {
+export function loadPage(page = "dashboard") {
   const app = document.getElementById("app");
+  if (!app) return;
 
-  // proteksi halaman (kecuali login)
+  // 🔥 AMANIN
+  if (!page) page = "dashboard";
+
+  // 🔥 NORMALISASI
+  page = page.replace("#/", "").replace("/", "");
+
   if (!isLoggedIn() && page !== "login") {
     app.innerHTML = Login();
     initLogin(() => loadPage("dashboard"));
@@ -30,9 +37,7 @@ export function loadPage(page) {
 
     case "dashboard":
       app.innerHTML = Dashboard();
-      setTimeout(() => {
-        initDashboard();
-      }, 0);
+      initDashboard();
       break;
 
     case "master-barang":
@@ -53,6 +58,11 @@ export function loadPage(page) {
     case "laporan":
       app.innerHTML = Laporan();
       initLaporan();
+      break;
+
+    case "purchasing":
+      app.innerHTML = Purchasing();
+      initPurchasing();
       break;
 
     default:

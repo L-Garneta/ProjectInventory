@@ -32,20 +32,23 @@ export function TransaksiKeluar() {
           <h3>Data Transaksi Keluar</h3>
         </div>
 
-        <div class="card-body">
-          <table class="table transaksi-table">
-            <thead>
-              <tr>
-                <th>No</th>
-                <th>Tanggal</th>
-                <th>Kode</th>
-                <th>Nama Barang</th>
-                <th>Jumlah</th>
-                <th>Unit</th>
-                <th>Keterangan</th>
-                <th>Aksi</th>
-              </tr>
-            </thead>
+        <div class="card card-soft shadow-sm">
+          <div class="card-body">
+
+            <table class="table table-striped table-hover align-middle">
+      
+              <thead class="table-light">
+                      <tr>
+                        <th>No</th>
+                        <th>Tanggal</th>
+                        <th>Kode</th>
+                        <th>Nama Barang</th>
+                        <th>Jumlah</th>
+                        <th>Unit</th>
+                        <th>Keterangan</th>
+                        <th>Aksi</th>
+                      </tr>
+                    </thead>
             <tbody id="trx-body">
               <tr>
                 <td colspan="8" class="text-center empty-text">
