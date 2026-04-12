@@ -5,20 +5,34 @@ let modal;
 
 export function MasterBarang() {
   return `
-    <div class="container mt-4">
+    <div class="page">
+      <h1 class="page-title">Master Barang</h1>
 
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h3 class="fw-bold">Master Barang</h3>
-    <button id="btn-add" class="btn btn-primary">
-      + Tambah Barang
-    </button>
-  </div>
+      <div class="top-bar">
+        <button id="btn-add" class="btn-primary-main">
+          + Tambah
+        </button>
+      </div>
+
+    <div class="filter-bar-modern">
+
+        <input type="date" id="filter-dari" />
+        <input type="date" id="filter-sampai" />
+
+        <input type="text" id="search-kode" placeholder="Cari kode..." />
+
+        <select id="filter-kategori">
+          <option value="">Semua kategori</option>
+        </select>
+
+        <button id="btn-filter" class="btn-primary-sm">Filter</button>
+        <button id="btn-reset" class="btn-outline">Reset</button>
+      </div>
 
   <div class="card shadow-sm">
     <div class="card-body">
 
       <div class="card card-soft shadow-sm">
-  <div class="card-body">
 
     <table class="table table-striped table-hover align-middle">
       
@@ -166,6 +180,17 @@ export function initMasterBarang() {
         alert("Kode sudah dipakai!");
       }
     });
+
+  // filter
+  document.getElementById("btn-filter").addEventListener("click", () => {
+    renderTable(true);
+  });
+
+  document.getElementById("btn-reset").addEventListener("click", () => {
+    document.getElementById("filter-dari").value = "";
+    document.getElementById("filter-sampai").value = "";
+    renderTable();
+  });
 }
 
 async function renderTable() {
