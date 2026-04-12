@@ -129,51 +129,6 @@ main#app {
   background-color: #f1f3ff;
 }
 
-/* LOGIN */
-.login-page {
-    min-height: calc(100vh - 60px);
-    display: grid;
-    place-items: center;
-}
-
-.login-form {
-    background: #0b1220;
-    color: #fff;
-    padding: 25px;
-    border-radius: 12px;
-    width: 320px;
-}
-
-.form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    margin-bottom: 12px;
-}
-
-.login-form input {
-    padding: 5px 10px;
-    border-radius: 6px;
-    border: 1px solid #1f2937;
-    background: #020617;
-    color: #fff;
-}
-
-.btn-primary {
-    width: 100%;
-    padding: 10px;
-    border: none;
-    border-radius: 8px;
-    background: #2563eb;
-    color: #fff;
-    cursor: pointer;
-}
-
-.error-text {
-    color: #ef4444;
-    min-height: 18px;
-}
-
 /*MASTER_BARANG*/
 .page {
     padding: 16px;
@@ -184,15 +139,6 @@ main#app {
     align-items: center;
     justify-content: space-between;
     margin-bottom: 12px;
-}
-
-.btn-tmbhBrg {
-    background: #C9B59C;
-    color: #000000;
-    border: none;
-    border-radius: 8px;
-    padding: 8px 12px;
-    cursor: pointer;
 }
 
 .btn-sm {
@@ -260,30 +206,37 @@ main#app {
 
 .action-bar {
     display: flex;
-    gap: 10px;
-    margin-bottom: 12px;
+    gap: 15px;
+    margin-bottom: 10px;
 }
 
 .btn-primary-main {
-    background: #877969;
-    color: #ffffff;
-    border: none;
-    padding: 8px 14px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 500;
+  background: #2d6cdf;
+  color: white;
+  padding: 12px;
+  width: 100%;
+  border-radius: 8px;
+  border: none;
+  font-weight: bold;
+  margin-bottom: 10px;
 }
 
 .btn-primary-main:hover {
     opacity: 0.9;
 }
 
-.filter-bar {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 16px;
-    flex-wrap: wrap;
+.filter-bar-modern {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+}
+
+.filter-bar-modern input,
+.filter-bar-modern select {
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
 }
 
 .filter-bar input {
@@ -293,7 +246,7 @@ main#app {
 }
 
 .btn-primary-sm {
-    background: #877969;
+    background: #2d6cdf;
     color: #ffffff;
     border: none;
     padding: 6px 10px;
@@ -322,6 +275,7 @@ main#app {
     color: #777;
     padding: 20px 0;
 }
+
 /* 
 LAPORAN PAGE */
 

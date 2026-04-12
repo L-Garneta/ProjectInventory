@@ -8,13 +8,28 @@ import {
 
 export function Purchasing() {
   return `
-    <div class="container-fluid p-4">
+    <div class="page">
+      <h1 class="page-title">Purchasing</h1>
 
-      <div class="d-flex justify-content-between mb-3">
-        <h3>Purchasing Tracker</h3>
-        <button class="btn btn-primary" id="btn-add">
-          + Tambah Purchasing
+      <div class="top-bar">
+        <button id="btn-add" class="btn-primary-main">
+          + Tambah
         </button>
+      </div>
+
+      <div class="filter-bar-modern">
+
+        <input type="date" id="filter-dari" />
+        <input type="date" id="filter-sampai" />
+
+        <input type="text" id="search-kode" placeholder="Cari kode..." />
+
+        <select id="filter-kategori">
+          <option value="">Semua kategori</option>
+        </select>
+
+        <button id="btn-filter" class="btn-primary-sm">Filter</button>
+        <button id="btn-reset" class="btn-outline">Reset</button>
       </div>
 
     <div class="card card-soft shadow-sm">
@@ -135,6 +150,17 @@ export function initPurchasing() {
         alert(e.message);
       }
     });
+
+  // filter
+  document.getElementById("btn-filter").addEventListener("click", () => {
+    renderTable(true);
+  });
+
+  document.getElementById("btn-reset").addEventListener("click", () => {
+    document.getElementById("filter-dari").value = "";
+    document.getElementById("filter-sampai").value = "";
+    renderTable();
+  });
 }
 
 async function renderTable() {

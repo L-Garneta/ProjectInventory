@@ -11,54 +11,55 @@ export function TransaksiKeluar() {
     <div class="page">
       <h1 class="page-title">Stok Keluar</h1>
 
-      <div class="action-bar">
-        <button id="btn-add" class="btn-primary-main">+ Tambah Stok Keluar</button>
-        <button id="btn-clear" class="btn-outline">Hapus Semua</button>
+      <div class="top-bar">
+        <button id="btn-add" class="btn-primary-main">
+          + Tambah
+        </button>
       </div>
 
-      <div class="filter-bar">
-        <label>Dari:</label>
-        <input type="date" id="filter-dari" />
+      <div class="filter-bar-modern">
 
-        <label>Sampai:</label>
+        <input type="date" id="filter-dari" />
         <input type="date" id="filter-sampai" />
+
+        <input type="text" id="search-kode" placeholder="Cari kode..." />
+
+        <select id="filter-kategori">
+          <option value="">Semua kategori</option>
+        </select>
 
         <button id="btn-filter" class="btn-primary-sm">Filter</button>
         <button id="btn-reset" class="btn-outline">Reset</button>
       </div>
 
-      <div class="card">
-        <div class="card-header">
-          <h3>Data Transaksi Keluar</h3>
-        </div>
-
-        <div class="card card-soft shadow-sm">
-          <div class="card-body">
-
-            <table class="table table-striped table-hover align-middle">
-      
-              <thead class="table-light">
-                      <tr>
-                        <th>No</th>
-                        <th>Tanggal</th>
-                        <th>Kode</th>
-                        <th>Nama Barang</th>
-                        <th>Jumlah</th>
-                        <th>Unit</th>
-                        <th>Keterangan</th>
-                        <th>Aksi</th>
-                      </tr>
-                    </thead>
-            <tbody id="trx-body">
+      <div class="card card-soft shadow-sm">
+        <div class="card-body">
+        
+          <table class="table table-striped table-hover align-middle">
+            <thead class="table-light">
               <tr>
-                <td colspan="8" class="text-center empty-text">
-                  Belum ada data
-                </td>
+              <th>No</th>
+              <th>Tanggal</th>
+              <th>Kode</th>
+              <th>Nama Barang</th>
+              <th>Jumlah</th>
+              <th>Unit</th>
+              <th>Keterangan</th>
+              <th>Aksi</th>          
               </tr>
-            </tbody>
-          </table>
-        </div>
+            </thead>        
+            
+          <tbody id="trx-body">
+            <tr>
+              <td colspan="8" class="text-center empty-text">
+                Belum ada data
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        
       </div>
+    </div>
 
       <!-- MODAL TAMBAH -->
       <div id="modal-keluar" class="modal hidden">
@@ -140,14 +141,6 @@ export function initTransaksiKeluar() {
       }
     });
 
-  // hapus semua
-  document.getElementById("btn-clear").addEventListener("click", async () => {
-    if (confirm("Yakin hapus semua transaksi?")) {
-      await clearTransaksiKeluar();
-      renderTable();
-    }
-  });
-
   // filter
   document.getElementById("btn-filter").addEventListener("click", () => {
     renderTable(true);
@@ -167,11 +160,21 @@ async function renderTable(useFilter = false) {
   if (useFilter) {
     const dari = document.getElementById("filter-dari").value;
     const sampai = document.getElementById("filter-sampai").value;
+    const kode = document.getElementById("search-kode")?.value.toLowerCase();
+    const kategori = document.getElementById("filter-kategori")?.value;
 
     if (dari) data = data.filter((t) => new Date(t.tanggal) >= new Date(dari));
 
     if (sampai)
       data = data.filter((t) => new Date(t.tanggal) <= new Date(sampai));
+
+    if (kode) {
+      data = data.filter((t) => t.kode.toLowerCase().includes(kode));
+    }
+
+    if (kategori) {
+      data = data.filter((t) => t.kategori === kategori);
+    }
   }
 
   if (!data.length) {
@@ -190,7 +193,7 @@ async function renderTable(useFilter = false) {
       (trx, i) => `
       <tr>
         <td>${i + 1}</td>
-        <td>${trx.tanggal}</td>
+        <td>${new Date(trx.tanggal).toLocaleDateString("id-ID")}</td>
         <td>${trx.kode}</td>
         <td>${trx.nama}</td>
         <td>${trx.jumlah}</td>
@@ -206,10 +209,13 @@ async function renderTable(useFilter = false) {
     )
     .join("");
 
+  // Hapus
   tbody.querySelectorAll("[data-id]").forEach((btn) => {
     btn.addEventListener("click", async () => {
-      await deleteTransaksiKeluar(Number(btn.dataset.id));
-      renderTable();
+      if (confirm("Hapus data ini?")) {
+        await deleteTransaksiKeluar(Number(btn.dataset.id));
+        renderTable();
+      }
     });
   });
 }

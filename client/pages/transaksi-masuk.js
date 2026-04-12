@@ -1,7 +1,6 @@
 import {
   getItems,
   getTransaksiMasuk,
-  addTransaksiMasuk,
   deleteTransaksiMasuk,
 } from "../services/api.js";
 
@@ -10,7 +9,21 @@ export function TransaksiMasuk() {
     <div class="page">
       <div class="page-header">
         <h2>Transaksi Masuk</h2>
-        <button id="btn-add" class="btn-primary">+ Tambah Transaksi</button>
+      </div>
+
+      <div class="filter-bar-modern">
+
+        <input type="date" id="filter-dari" />
+        <input type="date" id="filter-sampai" />
+
+        <input type="text" id="search-kode" placeholder="Cari kode..." />
+
+        <select id="filter-kategori">
+          <option value="">Semua kategori</option>
+        </select>
+
+        <button id="btn-filter" class="btn-primary-sm">Filter</button>
+        <button id="btn-reset" class="btn-outline">Reset</button>
       </div>
 
       <div class="card card-soft shadow-sm">
@@ -36,70 +49,16 @@ export function TransaksiMasuk() {
           </table>
         </div>
       </div>
-
-      <div id="modal-add" class="modal hidden">
-        <div class="modal-content">
-          <h3>Tambah Transaksi Masuk</h3>
-          <form id="form-add">
-            <select id="item_id" required></select>
-            <input id="jumlah" type="number" min="1" required />
-            <input id="supplier" placeholder="Supplier"/>
-            <input id="penerima" placeholder="Penerima"/>
-            <input id="keterangan" placeholder="Keterangan"/>
-
-            <button type="submit">Simpan</button>
-            <button type="button" id="btn-cancel">Batal</button>
-          </form>
-        </div>
-      </div>
     </div>
   `;
 }
 
 export function initTransaksiMasuk() {
   const tbody = document.getElementById("transaksi-masuk-tbody");
-  const btnAdd = document.getElementById("btn-add");
-  const btnCancel = document.getElementById("btn-cancel");
-  const form = document.getElementById("form-add");
-
-  // 💥 STOP kalau DOM belum siap
-  if (!tbody || !btnAdd || !btnCancel || !form) {
-    console.warn("DOM transaksi masuk belum siap");
-    return;
-  }
 
   // ✅ baru jalanin
   renderTable();
   loadItems();
-
-  btnAdd.addEventListener("click", openAdd);
-  btnCancel.addEventListener("click", closeModal);
-
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    const payload = {
-      item_id: Number(document.getElementById("item_id").value),
-      jumlah: Number(document.getElementById("jumlah").value),
-      supplier: document.getElementById("supplier").value,
-      penerima: document.getElementById("penerima").value,
-      keterangan: document.getElementById("keterangan").value,
-    };
-
-    if (!payload.item_id || payload.jumlah <= 0) {
-      alert("Isi data dengan benar");
-      return;
-    }
-
-    await addTransaksiMasuk(payload);
-
-    closeModal();
-    e.target.reset();
-
-    renderTable(); // refresh data
-
-    alert("Transaksi berhasil");
-  });
 }
 
 async function loadItems() {
@@ -119,6 +78,17 @@ async function loadItems() {
       )
       .join("")}
   `;
+
+  // filter
+  document.getElementById("btn-filter").addEventListener("click", () => {
+    renderTable(true);
+  });
+
+  document.getElementById("btn-reset").addEventListener("click", () => {
+    document.getElementById("filter-dari").value = "";
+    document.getElementById("filter-sampai").value = "";
+    renderTable();
+  });
 }
 
 async function renderTable() {
@@ -176,18 +146,6 @@ async function renderTable() {
       }
     });
   });
-}
-
-function openAdd() {
-  toggleModal(true);
-}
-
-function closeModal() {
-  toggleModal(false);
-}
-
-function toggleModal(show) {
-  document.getElementById("modal-add").classList.toggle("hidden", !show);
 }
 
 function formatDate(date) {
