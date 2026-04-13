@@ -8,6 +8,7 @@ export function Navbar() {
         <li><a href="#/master-barang" data-page="master-barang" class="nav-link text-white">Master Barang</a></li>
         <li><a href="#/purchasing" data-page="purchasing" class="nav-link text-white">Purchasing</a></li>
         <li><a href="#/transaksi-masuk" data-page="transaksi-masuk" class="nav-link text-white">Transaksi Masuk</a></li>
+        <li><a href="#/inventaris" data-page="inventaris" class="nav-link text-white">Inventaris</a></li>
         <li><a href="#/transaksi-keluar" data-page="transaksi-keluar" class="nav-link text-white">Transaksi Keluar</a></li>
         <li><a href="#/laporan" data-page="laporan" class="nav-link text-white">Laporan</a></li>
       </ul>

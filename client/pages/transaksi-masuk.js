@@ -41,7 +41,7 @@ export function TransaksiMasuk() {
                 <th>Supplier</th>
                 <th>Penerima</th>
                 <th>Ruangan</th>
-                <th>Keterangan</th>
+                <th>Status</th>
                 <th>Aksi</th>
               </tr>
             </thead>
@@ -124,8 +124,10 @@ async function renderTable() {
         <td>${trx.penerima || "-"}</td>
         <td>${trx.ruangan || "-"}</td>
         <td>
-          <span class="badge bg-secondary">
-            ${trx.keterangan || "-"}
+          <span class="badge ${
+            trx.status === "pending" ? "bg-warning" : "bg-success"
+          }">
+            ${trx.status}
           </span>
         </td>
         <td>

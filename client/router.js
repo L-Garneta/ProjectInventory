@@ -8,6 +8,7 @@ import {
 import { Laporan, initLaporan } from "./pages/laporan.js";
 import { Login, initLogin } from "./pages/login.js";
 import { Purchasing, initPurchasing } from "./pages/purchasing.js";
+import { Inventaris, initInventaris } from "./pages/inventaris.js";
 
 function isLoggedIn() {
   return localStorage.getItem("isLoggedIn") === "true";
@@ -63,6 +64,11 @@ export function loadPage(page = "dashboard") {
     case "purchasing":
       app.innerHTML = Purchasing();
       initPurchasing();
+      break;
+
+    case "inventaris":
+      app.innerHTML = Inventaris();
+      initInventaris();
       break;
 
     default:

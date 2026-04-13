@@ -172,3 +172,26 @@ export async function deletePurchasing(id) {
 
   return await res.json();
 }
+
+// ================= INVENTARIS =================
+
+// ambil transaksi pending
+export async function getInventarisPending() {
+  const res = await fetch(`${BASE_URL}/inventaris/pending`);
+  return await res.json();
+}
+
+// generate inventaris
+export async function generateInventaris(transaksi_id) {
+  const res = await fetch(`${BASE_URL}/inventaris/generate`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ transaksi_id }),
+  });
+
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message);
+  return data;
+}
