@@ -182,13 +182,13 @@ export async function getInventarisPending() {
 }
 
 // generate inventaris
-export async function generateInventaris(transaksi_id) {
+export async function generateInventaris(transaksi_id, ruangan) {
   const res = await fetch(`${BASE_URL}/inventaris/generate`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ transaksi_id }),
+    body: JSON.stringify({ transaksi_id, ruangan }),
   });
 
   const data = await res.json();

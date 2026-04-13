@@ -19,6 +19,28 @@ export function Inventaris() {
 
       <div id="inventaris-content"></div>
     </div>
+
+    <!-- Modal -->
+    <div id="modal-inventaris" class="modal" style="display:none;">
+        <div class="modal-content">
+            <h4>Generate Inventaris</h4>
+
+            <label>Kode Barang</label>
+            <input id="modal-kode" readonly />
+
+            <label>Ruangan</label>
+            <input id="modal-ruangan" placeholder="Masukkan ruangan" />
+
+            <label>Preview Kode</label>
+            <input id="modal-preview" readonly />
+
+            <br/>
+            <button id="btn-save-inventaris">💾 Simpan</button>
+            <button id="btn-close-modal">❌ Batal</button>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
   `;
 }
 
@@ -65,6 +87,7 @@ async function loadPending() {
       <thead>
         <tr>
           <th>No</th>
+          <th>Kode Barang</th>
           <th>Nama Barang</th>
           <th>Jumlah</th>
           <th>Status</th>
@@ -102,39 +125,32 @@ async function renderPending() {
       (trx, i) => `
       <tr>
         <td>${i + 1}</td>
+        <td><b>${trx.item?.kode ?? "-"}</b></td>
         <td>${trx.item?.nama ?? "-"}</td>
         <td>${trx.jumlah}</td>
         <td><span class="badge bg-warning text-dark">Pending</span></td>
         <td>
-          <button class="btn btn-sm btn-success generate-btn" data-id="${trx.id}">
-            ⚡ Generate
-          </button>
+            <button class="btn btn-sm btn-success open-modal-btn" 
+                data-id="${trx.id}"
+                data-kode="${trx.item?.kode}"
+                data-nama="${trx.item?.nama}"
+                data-tanggal="${trx.tanggal}">
+                ⚡ Generate
+            </button>
         </td>
       </tr>
     `,
     )
     .join("");
 
-  // event generate
-  tbody.querySelectorAll(".generate-btn").forEach((btn) => {
-    btn.addEventListener("click", async () => {
-      const id = btn.dataset.id;
-
-      if (!confirm("Generate inventaris?")) return;
-
-      try {
-        btn.disabled = true;
-        btn.innerText = "Processing...";
-
-        await generateInventaris(id);
-
-        alert("Berhasil generate 🔥");
-        renderPending();
-      } catch (err) {
-        alert(err.message);
-        btn.disabled = false;
-        btn.innerText = "⚡ Generate";
-      }
+  // event open modal
+  tbody.querySelectorAll(".open-modal-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      openModal({
+        id: btn.dataset.id,
+        kode: btn.dataset.kode,
+        tanggal: btn.dataset.tanggal,
+      });
     });
   });
 }
@@ -216,10 +232,90 @@ async function renderDataInventaris() {
           kode_inventaris: input.value,
         });
 
-        alert("Berhasil update ✅");
+        showToast("Berhasil update ✅");
       } catch (err) {
-        alert(err.message);
+        showToast(err.message, "error");
       }
     });
   });
+}
+let selectedTransaksiId = null;
+
+function openModal(data) {
+  const modal = document.getElementById("modal-inventaris");
+
+  selectedTransaksiId = data.id;
+
+  document.getElementById("modal-kode").value = data.kode;
+
+  // ambil bulan & tahun
+  const date = new Date(data.tanggal);
+  const bulan = String(date.getMonth() + 1).padStart(2, "0");
+  const tahun = date.getFullYear();
+
+  const ruanganInput = document.getElementById("modal-ruangan");
+  const preview = document.getElementById("modal-preview");
+
+  function updatePreview() {
+    const ruangan = ruanganInput.value || "XXX";
+    preview.value = `KPRDS/${data.kode}/${bulan}/${tahun}/${ruangan}/001`;
+  }
+
+  ruanganInput.oninput = () => {
+    // auto uppercase + ganti spasi jadi _
+    ruanganInput.value = ruanganInput.value.toUpperCase().replace(/\s+/g, "_");
+
+    updatePreview();
+  };
+
+  modal.style.display = "block";
+}
+
+function closeModal() {
+  document.getElementById("modal-inventaris").style.display = "none";
+}
+
+document.addEventListener("click", async (e) => {
+  if (e.target.id === "btn-save-inventaris") {
+    const btn = e.target; // 🔥 ambil tombolnya
+    const ruangan = document.getElementById("modal-ruangan").value;
+
+    if (!ruangan) {
+      showToast("Ruangan wajib diisi!", "error");
+      return;
+    }
+
+    // 🔥 disable tombol
+    btn.disabled = true;
+    btn.innerText = "Processing...";
+
+    try {
+      await generateInventaris(selectedTransaksiId, ruangan);
+
+      showToast("Berhasil generate 🔥");
+      closeModal();
+      renderPending();
+    } catch (err) {
+      showToast(err.message, "error");
+
+      // 🔥 aktifkan lagi kalau error
+      btn.disabled = false;
+      btn.innerText = "💾 Simpan";
+    }
+  }
+
+  if (e.target.id === "btn-close-modal") {
+    closeModal();
+  }
+});
+
+function showToast(message, type = "success") {
+  const toast = document.getElementById("toast");
+
+  toast.innerText = message;
+  toast.className = `toast show ${type}`;
+
+  setTimeout(() => {
+    toast.className = "toast";
+  }, 2500);
 }
