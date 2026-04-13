@@ -195,3 +195,21 @@ export async function generateInventaris(transaksi_id) {
   if (!res.ok) throw new Error(data.message);
   return data;
 }
+
+// 🔥 DATA INVENTARIS (TAMBAHAN)
+export async function getInventaris() {
+  const res = await fetch(`${BASE_URL}/inventaris`);
+  return await res.json();
+}
+
+export async function updateInventaris(id, data) {
+  const res = await fetch(`${BASE_URL}/inventaris/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+
+  const result = await res.json();
+  if (!res.ok) throw new Error(result.message);
+  return result;
+}
