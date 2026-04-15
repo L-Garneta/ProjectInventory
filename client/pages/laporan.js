@@ -3,6 +3,7 @@ import {
   getItems,
   getTransaksiMasuk,
   getTransaksiKeluar,
+  getInventaris,
 } from "../services/api.js";
 
 export function Laporan() {
@@ -16,7 +17,7 @@ export function Laporan() {
           <option value="master">Master Barang</option>
           <option value="masuk">Transaksi Masuk</option>
           <option value="keluar">Transaksi Keluar</option>
-          <option value="opname">Stok Opname</option>
+          <option value="inventaris">Inventaris</option>
         </select>
 
         <input type="date" id="filterDari">
@@ -24,10 +25,6 @@ export function Laporan() {
 
         <button id="btn-generate" class="btn-primary">
           Generate Laporan
-        </button>
-
-        <button id="btn-pdf" class="btn-outline">
-          Export PDF
         </button>
 
         <button id="btn-excel" class="btn-outline">
@@ -38,7 +35,7 @@ export function Laporan() {
       <div class="card card-soft shadow-sm">
         <div class="card-body">
 
-          <table class="table table-striped table-hover align-middle">
+          <table id="laporan-table" class="table table-striped">
 
             <thead>
               <tr>
@@ -72,138 +69,104 @@ export function Laporan() {
 export function initLaporan() {
   const filterJenis = document.getElementById("filterJenisLaporan");
   const btnGenerate = document.getElementById("btn-generate");
-  const btnPDF = document.getElementById("btn-pdf");
   const btnExcel = document.getElementById("btn-excel");
 
-  btnGenerate.addEventListener("click", generateLaporan);
-  btnPDF.addEventListener("click", exportPDF);
   btnExcel.addEventListener("click", exportExcel);
 
-  function generateLaporan() {
+  btnGenerate.addEventListener("click", async () => {
     const jenis = filterJenis.value;
 
+    const tbody = document.getElementById("laporan-body");
+    tbody.innerHTML = `<tr><td colspan="7">Loading...</td></tr>`;
+
     if (jenis === "master") {
-      renderMasterBarang();
+      await renderMasterBarang();
     } else if (jenis === "masuk") {
-      renderTransaksiMasuk();
+      await renderTransaksiMasuk();
     } else if (jenis === "keluar") {
-      renderTransaksiKeluar();
-    } else if (jenis === "opname") {
-      renderStokOpname();
+      await renderTransaksiKeluar();
+    } else if (jenis === "inventaris") {
+      await renderInventaris();
     }
-  }
+  });
 
   // =============================
   // MASTER BARANG
   // =============================
-  function renderMasterBarang() {
-    const items = getItems();
-    const thead = document.getElementById("laporan-thead");
-    const tbody = document.getElementById("laporan-tbody");
+  async function renderMasterBarang() {
+    const items = await getItems(); // ✅
 
-    thead.innerHTML = `
-      <tr>
-        <th>Kode</th>
-        <th>Nama</th>
-        <th>Kategori</th>
-        <th>Ruangan</th>
-        <th>Stok</th>
-      </tr>
-    `;
+    const tbody = document.getElementById("laporan-body");
 
     tbody.innerHTML = items.length
       ? items
           .map(
-            (item) => `
+            (item, i) => `
         <tr>
+          <td>${i + 1}</td>
+          <td>-</td>
           <td>${item.kode}</td>
           <td>${item.nama}</td>
-          <td>${item.kategori || "-"}</td>
-          <td>${item.ruangan || "-"}</td>
+          <td>-</td>
+          <td>-</td>
           <td>${item.stok}</td>
         </tr>
       `,
           )
           .join("")
-      : `<tr><td colspan="5" class="text-center">Tidak ada data</td></tr>`;
+      : `<tr><td colspan="7">Tidak ada data</td></tr>`;
   }
 
   // =============================
   // TRANSAKSI MASUK
   // =============================
-  function renderTransaksiMasuk() {
-    const data = filterByTanggal(getTransaksiMasuk());
-    renderTransaksiTable(data, "Transaksi Masuk");
-  }
+  async function renderTransaksiMasuk() {
+    const data = await getTransaksiMasuk(); // ✅
 
-  // =============================
-  // TRANSAKSI KELUAR
-  // =============================
-  function renderTransaksiKeluar() {
-    const data = filterByTanggal(getTransaksiKeluar());
-    renderTransaksiTable(data, "Transaksi Keluar");
-  }
-
-  function renderTransaksiTable(data, title) {
-    const thead = document.getElementById("laporan-thead");
-    const tbody = document.getElementById("laporan-tbody");
-
-    thead.innerHTML = `
-      <tr>
-        <th>Tanggal</th>
-        <th>Kode</th>
-        <th>Nama</th>
-        <th>Jumlah</th>
-      </tr>
-    `;
+    const tbody = document.getElementById("laporan-body");
 
     tbody.innerHTML = data.length
       ? data
           .map(
-            (trx) => `
+            (trx, i) => `
         <tr>
+          <td>${i + 1}</td>
           <td>${trx.tanggal}</td>
-          <td>${trx.kode}</td>
-          <td>${trx.nama}</td>
+          <td>${trx.item?.kode ?? "-"}</td>
+          <td>${trx.item?.nama ?? "-"}</td>
           <td>${trx.jumlah}</td>
+          <td>-</td>
+          <td>-</td>
         </tr>
       `,
           )
           .join("")
-      : `<tr><td colspan="4" class="text-center">Tidak ada data ${title}</td></tr>`;
+      : `<tr><td colspan="7">Tidak ada data</td></tr>`;
   }
 
-  // =============================
-  // STOK OPNAME
-  // =============================
-  function renderStokOpname() {
-    const items = getItems();
-    const thead = document.getElementById("laporan-thead");
-    const tbody = document.getElementById("laporan-tbody");
+  // TRANSAKSI KELUAR
+  async function renderTransaksiKeluar() {
+    const data = await getTransaksiKeluar();
 
-    thead.innerHTML = `
-      <tr>
-        <th>Kode</th>
-        <th>Nama</th>
-        <th>Stok</th>
-        <th>Min Stok</th>
-        <th>Status</th>
-      </tr>
-    `;
+    const tbody = document.getElementById("laporan-body");
 
-    tbody.innerHTML = items
-      .map(
-        (item) => `
-      <tr>
-        <td>${item.kode}</td>
-        <td>${item.nama}</td>
-        <td>${item.stok}</td>
-        <td>${item.stok_minimum}</td>
-        <td>${item.stok <= item.stok_minimum ? "Perlu Restock" : "Aman"}</td>
-      </tr>
-    `,
-      )
-      .join("");
+    tbody.innerHTML = data.length
+      ? data
+          .map(
+            (trx, i) => `
+        <tr>
+          <td>${i + 1}</td>
+          <td>${trx.tanggal}</td>
+          <td>${trx.item?.kode ?? "-"}</td>
+          <td>${trx.item?.nama ?? "-"}</td>
+          <td>-</td>
+          <td>${trx.jumlah}</td>
+          <td>-</td>
+        </tr>
+      `,
+          )
+          .join("")
+      : `<tr><td colspan="7">Tidak ada data</td></tr>`;
   }
 
   // =============================
@@ -227,33 +190,6 @@ export function initLaporan() {
   }
 
   // =============================
-  // EXPORT PDF (HANYA TABEL)
-  // =============================
-  function exportPDF() {
-    const tableHTML = document.getElementById("laporan-area").innerHTML;
-    const newWin = window.open("", "", "width=900,height=700");
-    newWin.document.write(`
-      <html>
-        <head>
-          <title>Laporan</title>
-          <style>
-            body { font-family: Arial; padding:20px; }
-            table { width:100%; border-collapse: collapse; }
-            th, td { border:1px solid #000; padding:8px; text-align:left; }
-            th { background:#f2f2f2; }
-          </style>
-        </head>
-        <body>
-          <h3>Laporan</h3>
-          ${tableHTML}
-        </body>
-      </html>
-    `);
-    newWin.document.close();
-    newWin.print();
-  }
-
-  // =============================
   // EXPORT EXCEL
   // =============================
   function exportExcel() {
@@ -266,5 +202,34 @@ export function initLaporan() {
     link.href = URL.createObjectURL(blob);
     link.download = "laporan.xls";
     link.click();
+  }
+
+  // INVENTARIS
+  async function renderInventaris() {
+    const data = await getInventaris();
+
+    const tbody = document.getElementById("laporan-body");
+
+    tbody.innerHTML = data.length
+      ? data
+          .map(
+            (inv, i) => `
+        <tr>
+          <td>${i + 1}</td>
+          <td>${formatDate(inv.created_at)}</td>
+          <td>${inv.kode_inventaris}</td>
+          <td>${inv.item?.nama ?? "-"}</td>
+          <td>-</td>
+          <td>-</td>
+          <td>1</td>
+        </tr>
+      `,
+          )
+          .join("")
+      : `<tr><td colspan="7">Tidak ada data inventaris</td></tr>`;
+  }
+
+  function formatDate(date) {
+    return new Date(date).toLocaleDateString("id-ID");
   }
 }
