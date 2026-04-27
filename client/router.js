@@ -1,39 +1,33 @@
+import { Login, initLogin } from "./pages/login.js";
 import { Dashboard, initDashboard } from "./pages/dashboard.js";
 import { MasterBarang, initMasterBarang } from "./pages/master-barang.js";
 import { TransaksiMasuk, initTransaksiMasuk } from "./pages/transaksi-masuk.js";
-import {
-  TransaksiKeluar,
-  initTransaksiKeluar,
-} from "./pages/transaksi-keluar.js";
+import { TransaksiKeluar, initTransaksiKeluar } from "./pages/transaksi-keluar.js";
 import { Laporan, initLaporan } from "./pages/laporan.js";
-import { Login, initLogin } from "./pages/login.js";
 import { Purchasing, initPurchasing } from "./pages/purchasing.js";
 import { Inventaris, initInventaris } from "./pages/inventaris.js";
 
 function isLoggedIn() {
-  return localStorage.getItem("isLoggedIn") === "true";
+  return !!localStorage.getItem("token");
 }
 
 export function loadPage(page = "dashboard") {
   const app = document.getElementById("app");
   if (!app) return;
 
-  // 🔥 AMANIN
-  if (!page) page = "dashboard";
-
-  // 🔥 NORMALISASI
   page = page.replace("#/", "").replace("/", "");
 
   if (!isLoggedIn() && page !== "login") {
-    app.innerHTML = Login();
-    initLogin(() => loadPage("dashboard"));
+    window.location.hash = "/login";
     return;
   }
 
   switch (page) {
     case "login":
       app.innerHTML = Login();
-      initLogin(() => loadPage("dashboard"));
+      initLogin(() => {
+        window.location.hash = "/dashboard";
+      });
       break;
 
     case "dashboard":

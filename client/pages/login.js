@@ -4,7 +4,7 @@ export function Login() {
       <h2>Login</h2>
       <form id="loginForm" class="login-form">
         <div class="form-group">
-          <label>Username</label>
+          <label>Email</label>
           <input type="text" id="username" required />
         </div>
 
@@ -24,25 +24,35 @@ export function Login() {
 export function initLogin(onSuccess) {
   const form = document.getElementById("loginForm");
 
-  form.addEventListener("submit", function (e) {
+  form.addEventListener("submit", async function (e) {
     e.preventDefault();
 
-    const username = document.getElementById("username").value;
+    const email = document.getElementById("username").value;
     const password = document.getElementById("password").value;
 
-    // akun default
-    const validUser = "admin";
-    const validPass = "12345";
+    try {
+      const res = await fetch("http://localhost:8000/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-    if (username === validUser && password === validPass) {
-      // simpan status login
-      localStorage.setItem("isLoggedIn", "true");
+      const data = await res.json();
 
-      // callback ke app (redirect ke dashboard)
+      if (!res.ok) {
+        throw new Error(data.message || "Login gagal");
+      }
+
+      // 🔥 SIMPAN TOKEN
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      // redirect lewat router
       onSuccess?.();
-    } else {
-      document.getElementById("error").textContent =
-        "Username atau password salah!";
+    } catch (err) {
+      document.getElementById("error").textContent = err.message;
     }
   });
 }
