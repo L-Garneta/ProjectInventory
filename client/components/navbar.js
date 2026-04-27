@@ -1,3 +1,5 @@
+import { logout } from "../auth.js"; // sesuaikan path
+
 export function Navbar() {
   return `
     <div class="sidebar p-3 text-white">
@@ -12,6 +14,13 @@ export function Navbar() {
         <li><a href="#/transaksi-keluar" data-page="transaksi-keluar" class="nav-link text-white">Transaksi Keluar</a></li>
         <li><a href="#/laporan" data-page="laporan" class="nav-link text-white">Laporan</a></li>
       </ul>
+
+      <!-- 🔥 LOGOUT  -->
+      <div class="mt-auto pt-4">
+        <button id="btn-logout" class="btn btn-danger w-100">
+          🚪 Logout
+        </button>
+      </div>
     </div>
   `;
 }
@@ -33,4 +42,7 @@ export function initNavbar(onNavigate) {
       onNavigate(page);
     });
   });
+
+  // 🔥 LOGOUT EVENT
+  document.getElementById("btn-logout")?.addEventListener("click", logout);
 }
