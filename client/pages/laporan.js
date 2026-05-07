@@ -37,7 +37,7 @@ export function Laporan() {
 
           <table id="laporan-table" class="table table-striped">
 
-            <thead>
+            <thead class="table-light">
               <tr>
                 <th>No</th>
                 <th>Tanggal</th>

@@ -12,3 +12,20 @@ export function logout() {
 
   window.location.hash = "/login"; // 🔥 WAJIB
 }
+
+export function getUser() {
+  return JSON.parse(localStorage.getItem("user"));
+}
+
+export function getRole() {
+  const user = getUser();
+  return user?.role || null;
+}
+
+export function isAdmin() {
+  return getRole() === "admin";
+}
+
+export function isStaff() {
+  return getRole() === "staff";
+}
