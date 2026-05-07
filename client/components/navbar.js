@@ -1,21 +1,29 @@
-import { logout } from "../auth.js"; // sesuaikan path
+import { logout, isAdmin } from "../auth.js";
 
 export function Navbar() {
+  const adminOnly = isAdmin();
+
   return `
     <div class="sidebar p-3 text-white">
       <h4 class="fw-bold mb-4">Inventory</h4>
 
       <ul class="nav flex-column gap-2">
-        <li><a href="#/dashboard" data-page="dashboard" class="nav-link text-white">Dashboard</a></li>
-        <li><a href="#/master-barang" data-page="master-barang" class="nav-link text-white">Master Barang</a></li>
-        <li><a href="#/purchasing" data-page="purchasing" class="nav-link text-white">Purchasing</a></li>
-        <li><a href="#/transaksi-masuk" data-page="transaksi-masuk" class="nav-link text-white">Transaksi Masuk</a></li>
-        <li><a href="#/inventaris" data-page="inventaris" class="nav-link text-white">Inventaris</a></li>
-        <li><a href="#/transaksi-keluar" data-page="transaksi-keluar" class="nav-link text-white">Transaksi Keluar</a></li>
-        <li><a href="#/laporan" data-page="laporan" class="nav-link text-white">Laporan</a></li>
+        <li><a href="#/dashboard" data-page="dashboard" class="nav-link text-white">📊 Dashboard</a></li>
+        <li><a href="#/master-barang" data-page="master-barang" class="nav-link text-white">📦 Master Barang</a></li>
+        <li><a href="#/inventaris" data-page="inventaris" class="nav-link text-white">🗂 Inventaris</a></li>
+        <li><a href="#/laporan" data-page="laporan" class="nav-link text-white">📄 Laporan</a></li>
+
+        ${
+          adminOnly
+            ? `
+        <li><a href="#/purchasing" data-page="purchasing" class="nav-link text-white">🛒 Purchasing</a></li>
+        <li><a href="#/transaksi-masuk" data-page="transaksi-masuk" class="nav-link text-white">📥 Transaksi Masuk</a></li>
+        <li><a href="#/transaksi-keluar" data-page="transaksi-keluar" class="nav-link text-white">📤 Transaksi Keluar</a></li>
+        `
+            : ""
+        }
       </ul>
 
-      <!-- 🔥 LOGOUT  -->
       <div class="mt-auto pt-4">
         <button id="btn-logout" class="btn btn-danger w-100">
           🚪 Logout
@@ -28,8 +36,7 @@ export function Navbar() {
 export function initNavbar(onNavigate) {
   document.querySelectorAll(".nav-link").forEach((link) => {
     link.addEventListener("click", (e) => {
-      e.preventDefault(); // 🔥 penting
-
+      e.preventDefault();
       const page =
         link.dataset.page || link.getAttribute("href").replace("#/", "");
 
@@ -38,11 +45,9 @@ export function initNavbar(onNavigate) {
         .forEach((l) => l.classList.remove("active"));
 
       link.classList.add("active");
-
       onNavigate(page);
     });
   });
 
-  // 🔥 LOGOUT EVENT
   document.getElementById("btn-logout")?.addEventListener("click", logout);
 }

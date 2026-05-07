@@ -9,10 +9,14 @@ import {
 import { Laporan, initLaporan } from "./pages/laporan.js";
 import { Purchasing, initPurchasing } from "./pages/purchasing.js";
 import { Inventaris, initInventaris } from "./pages/inventaris.js";
+import { isAdmin } from "./auth.js";
 
 function isLoggedIn() {
   return !!localStorage.getItem("token");
 }
+
+// Halaman yang hanya boleh diakses admin
+const ADMIN_ONLY_PAGES = ["purchasing", "transaksi-masuk", "transaksi-keluar"];
 
 export function loadPage(page = "dashboard") {
   const app = document.getElementById("app");
@@ -20,8 +24,23 @@ export function loadPage(page = "dashboard") {
 
   page = page.replace("#/", "").replace("/", "");
 
+  // Belum login → redirect ke login
   if (!isLoggedIn() && page !== "login") {
     window.location.hash = "/login";
+    return;
+  }
+
+  // Staff coba akses halaman admin → redirect ke dashboard
+  if (isLoggedIn() && ADMIN_ONLY_PAGES.includes(page) && !isAdmin()) {
+    app.innerHTML = `
+      <div class="page d-flex align-items-center justify-content-center" style="min-height:60vh">
+        <div class="text-center">
+          <h3>🚫 Akses Ditolak</h3>
+          <p class="text-muted">Halaman ini hanya bisa diakses oleh Admin.</p>
+          <a href="#/dashboard" class="btn btn-primary mt-2">Kembali ke Dashboard</a>
+        </div>
+      </div>
+    `;
     return;
   }
 
@@ -29,6 +48,14 @@ export function loadPage(page = "dashboard") {
     case "login":
       app.innerHTML = Login();
       initLogin(() => {
+        // Setelah login, rebuild navbar sesuai role baru
+        const navbarEl = document.getElementById("navbar");
+        if (navbarEl) {
+          import("./components/navbar.js").then(({ Navbar, initNavbar }) => {
+            navbarEl.innerHTML = Navbar();
+            initNavbar((p) => loadPage(p));
+          });
+        }
         window.location.hash = "/dashboard";
       });
       break;

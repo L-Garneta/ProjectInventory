@@ -1,3 +1,6 @@
+import { Navbar, initNavbar } from "../components/navbar.js";
+import { loadPage } from "../router.js";
+
 export function Login() {
   return `
     <div class="login-page">
@@ -7,14 +10,11 @@ export function Login() {
           <label>Email</label>
           <input type="text" id="username" required />
         </div>
-
         <div class="form-group">
           <label>Password</label>
           <input type="password" id="password" required />
         </div>
-
         <p id="error" class="error-text"></p>
-
         <button type="submit" class="btn-primary">Login</button>
       </form>
     </div>
@@ -33,9 +33,7 @@ export function initLogin(onSuccess) {
     try {
       const res = await fetch("http://localhost:8000/api/login", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
 
@@ -45,11 +43,16 @@ export function initLogin(onSuccess) {
         throw new Error(data.message || "Login gagal");
       }
 
-      // 🔥 SIMPAN TOKEN
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
 
-      // redirect lewat router
+      // Bangun navbar sesuai role yang baru login
+      const navbarEl = document.getElementById("navbar");
+      if (navbarEl) {
+        navbarEl.innerHTML = Navbar();
+        initNavbar((page) => loadPage(page));
+      }
+
       onSuccess?.();
     } catch (err) {
       document.getElementById("error").textContent = err.message;
