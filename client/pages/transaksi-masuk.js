@@ -3,8 +3,10 @@ import {
   getTransaksiMasuk,
   deleteTransaksiMasuk,
 } from "../services/api.js";
+import { isAdmin } from "../auth.js";
 
 export function TransaksiMasuk() {
+  const admin = isAdmin();
   return `
     <div class="page">
       <div class="page-header">
@@ -12,25 +14,17 @@ export function TransaksiMasuk() {
       </div>
 
       <div class="filter-bar-modern">
-
         <input type="date" id="filter-dari" />
         <input type="date" id="filter-sampai" />
-
         <input type="text" id="search-kode" placeholder="Cari kode..." />
-
-        <select id="filter-kategori">
-          <option value="">Semua kategori</option>
-        </select>
-
+        <select id="filter-kategori"><option value="">Semua kategori</option></select>
         <button id="btn-filter" class="btn-primary-sm">Filter</button>
         <button id="btn-reset" class="btn-outline">Reset</button>
       </div>
 
       <div class="card card-soft shadow-sm">
         <div class="card-body">
-
           <table class="table table-striped table-hover align-middle">
-      
             <thead class="table-light">
               <tr>
                 <th>No</th>
@@ -42,7 +36,7 @@ export function TransaksiMasuk() {
                 <th>Penerima</th>
                 <th>Ruangan</th>
                 <th>Status</th>
-                <th>Aksi</th>
+                ${admin ? `<th>Aksi</th>` : ""}
               </tr>
             </thead>
             <tbody id="transaksi-masuk-tbody"></tbody>
@@ -54,9 +48,6 @@ export function TransaksiMasuk() {
 }
 
 export function initTransaksiMasuk() {
-  const tbody = document.getElementById("transaksi-masuk-tbody");
-
-  // ✅ baru jalanin
   renderTable();
   loadItems();
 }
@@ -64,26 +55,15 @@ export function initTransaksiMasuk() {
 async function loadItems() {
   const select = document.getElementById("item_id");
   if (!select) return;
-
   const items = await getItems();
-
   select.innerHTML = `
     <option value="">Pilih Barang</option>
-    ${items
-      .map(
-        (item) =>
-          `<option value="${item.id}">
-            ${item.kode} - ${item.nama}
-          </option>`,
-      )
-      .join("")}
+    ${items.map((item) => `<option value="${item.id}">${item.kode} - ${item.nama}</option>`).join("")}
   `;
 
-  // filter
-  document.getElementById("btn-filter").addEventListener("click", () => {
-    renderTable(true);
-  });
-
+  document
+    .getElementById("btn-filter")
+    .addEventListener("click", () => renderTable(true));
   document.getElementById("btn-reset").addEventListener("click", () => {
     document.getElementById("filter-dari").value = "";
     document.getElementById("filter-sampai").value = "";
@@ -92,22 +72,22 @@ async function loadItems() {
 }
 
 async function renderTable() {
+  const admin = isAdmin();
   const tbody = document.getElementById("transaksi-masuk-tbody");
   if (!tbody) return;
 
-  tbody.innerHTML = `<tr><td colspan="10">Loading...</td></tr>`;
+  tbody.innerHTML = `<tr><td colspan="${admin ? 10 : 9}">Loading...</td></tr>`;
 
-  let data = []; // 🔥 pindahin ke luar
-
+  let data = [];
   try {
     data = await getTransaksiMasuk();
   } catch (e) {
-    tbody.innerHTML = `<tr><td colspan="10">Gagal load data</td></tr>`;
-    return; // 🔥 STOP di sini
+    tbody.innerHTML = `<tr><td colspan="${admin ? 10 : 9}">Gagal load data</td></tr>`;
+    return;
   }
 
   if (!data.length) {
-    tbody.innerHTML = `<tr><td colspan="10">Belum ada transaksi</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="${admin ? 10 : 9}">Belum ada transaksi</td></tr>`;
     return;
   }
 
@@ -124,30 +104,34 @@ async function renderTable() {
         <td>${trx.penerima || "-"}</td>
         <td>${trx.ruangan || "-"}</td>
         <td>
-          <span class="badge ${
-            trx.status === "pending" ? "bg-warning" : "bg-success"
-          }">
+          <span class="badge ${trx.status === "pending" ? "bg-warning" : "bg-success"}">
             ${trx.status}
           </span>
         </td>
+        ${
+          admin
+            ? `
         <td>
-          <button class="btn btn-sm btn-outline-danger" data-id="${trx.id}">
-            🗑 Hapus
-          </button>
+          <button class="btn btn-sm btn-outline-danger" data-id="${trx.id}">🗑 Hapus</button>
         </td>
+        `
+            : ""
+        }
       </tr>
     `,
     )
     .join("");
 
-  tbody.querySelectorAll("[data-id]").forEach((btn) => {
-    btn.addEventListener("click", async () => {
-      if (confirm("Hapus?")) {
-        await deleteTransaksiMasuk(Number(btn.dataset.id));
-        renderTable();
-      }
+  if (admin) {
+    tbody.querySelectorAll("[data-id]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        if (confirm("Hapus?")) {
+          await deleteTransaksiMasuk(Number(btn.dataset.id));
+          renderTable();
+        }
+      });
     });
-  });
+  }
 }
 
 function formatDate(date) {
