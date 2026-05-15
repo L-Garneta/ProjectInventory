@@ -13,6 +13,12 @@ body {
   background: linear-gradient(180deg, #3C467B, #50589C);
 }
 
+.sidebar h4 {
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  font-size: 1.3rem;
+}
+
 .nav-link {
   border-radius: 8px;
   padding: 10px;
@@ -398,4 +404,109 @@ LAPORAN PAGE */
 
 .toast.error {
   background: #dc3545;
+}
+
+/* Login Page */
+.login-page {
+  position: fixed;        /* tambah ini */
+  top: 0;
+  left: 0;
+  width: 100vw;           /* full lebar layar */
+  min-height: 100vh;
+  background: #50589C;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;          /* tampil di atas sidebar */
+}
+
+.login-card {
+  background: #fff;
+  border: 2px solid #000;
+  border-radius: 10px;
+  padding: 2.5rem 2.5rem;
+  width: 400px;           /* ubah dari max-width jadi width tetap */
+  min-height: 400px;      /* tambah ini supaya lebih kotak */
+}
+
+.login-card h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #0f2a4a;
+  margin-bottom: 1.2rem;
+}
+
+.login-card .form-group {
+  margin-bottom: 1rem;
+}
+
+.login-card label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #444;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.login-card input,
+.login-card select {
+  width: 100%;
+  height: 38px;
+  border: 1.5px solid #ccc;
+  border-radius: 3px;
+  padding: 0 10px;
+  font-size: 14px;
+  background: #f9fbff;
+  box-sizing: border-box;
+}
+
+.login-card input:focus,
+.login-card select:focus {
+  border-color: #185fa5;
+  outline: none;
+  background: #fff;
+}
+
+.login-card .btn-primary {
+  width: 100%;
+  height: 40px;
+  background: #185fa5;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 0.4rem;
+}
+
+.login-card .btn-primary:hover {
+  background: #0f2a4a;
+}
+
+.error-text {
+  color: #c0392b;
+  font-size: 12px;
+  margin: 0 0 0.5rem;
+  min-height: 16px;
+}
+
+/* Login overlay */
+.login-overlay {
+  background: rgba(10, 25, 50, 0.50);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-card select {
+  width: 100%;
+  height: 38px;
+  border: 1.5px solid #ccc;
+  border-radius: 3px;
+  padding: 0 10px;
+  font-size: 14px;
+  background: #f9fbff;
 }
